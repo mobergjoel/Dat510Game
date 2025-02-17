@@ -50,21 +50,26 @@ public class NewBehaviourScript : MonoBehaviour
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
         //Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 1f) walkPointSet = false;
+        if (distanceToWalkPoint.magnitude < 2f) walkPointSet = false;
     }
 
     private void SearchWalkPoint()
     {
-        //Calculate random point in range
+        // Generate a random point in range
         float randomZ = Random.Range(-walkPointRange, walkPointRange);
         float randomX = Random.Range(-walkPointRange, walkPointRange);
 
-        walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+        Vector3 randomPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
 
-        if (Physics.Raycast(walkPoint, -transform.up, 2f, whatIsGround))
+        // Check if the random point is on the NavMesh
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomPoint, out hit, 2f, NavMesh.AllAreas))
+        {
+            walkPoint = hit.position; // Set walkPoint to the closest valid NavMesh position
             walkPointSet = true;
-
+        }
     }
+
 
     private void ChasePlayer()
     {
