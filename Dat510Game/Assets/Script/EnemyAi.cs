@@ -24,10 +24,13 @@ public class NewBehaviourScript : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
+    Animator animator;
+
     private void Awake()
     {
         player = GameObject.Find("PlayerObj").transform;
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -43,6 +46,7 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void Patroling()
     {
+        animator.SetBool("isInRange", false);
         if (!walkPointSet) SearchWalkPoint();
 
         if (walkPointSet) agent.SetDestination(walkPoint);
@@ -73,20 +77,21 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void ChasePlayer()
     {
+        animator.SetBool("isInRange", true);
         agent.SetDestination(player.position);
     }
 
-    private void AttackPlayer() 
-    { 
+    private void AttackPlayer()
+    {
         //Make sure enemy does't move
         agent.SetDestination(transform.position);
 
         transform.LookAt(player);
 
-        if(!alreadyAttacked) 
+        if (!alreadyAttacked)
         {
             //Attack code here
-            
+
 
             //
 
