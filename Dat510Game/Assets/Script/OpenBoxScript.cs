@@ -14,6 +14,8 @@ public class OpenBoxScript : MonoBehaviour
     public GameObject keyMissingText;
     public Text missingKeyText;
     public AudioSource openSound;
+    //public gameObject Chest;
+    public PickUpGun script;
 
     public bool inReach;
     public bool isOpen;
@@ -21,12 +23,21 @@ public class OpenBoxScript : MonoBehaviour
     public int howManyKeys;
     public int keysNeeded = 3;
     private string f;
+    public GameObject hudKey1;
+    public GameObject hudKey2;
+    public GameObject hudKey3;
 
     void Start()
     {
         inReach = false;
         openText.SetActive(false);
         keyMissingText.SetActive(false);
+        script.canShowPickUpText = false;
+        script.enabled = false;
+        hudKey1.SetActive(false);
+        hudKey2.SetActive(false);
+        hudKey3.SetActive(false);
+
     }
 
 
@@ -58,11 +69,19 @@ public class OpenBoxScript : MonoBehaviour
             keyOBNeeded1.SetActive(false);
             keyOBNeeded2.SetActive(false);
             keyOBNeeded3.SetActive(false);
+            hudKey1.SetActive(false);
+            hudKey2.SetActive(false);
+            hudKey3.SetActive(false);
+            howManyKeys = 0;
             openSound.Play();
             boxOB.SetBool("open", true);
             openText.SetActive(false);
             keyMissingText.SetActive(false);
             isOpen = true;
+            script.enabled = true;
+            script.canShowPickUpText = true;
+
+
         }
 
         else if (inReach && Input.GetButtonDown("Interact") && !isOpen)
@@ -81,6 +100,17 @@ public class OpenBoxScript : MonoBehaviour
             keyMissingText.SetActive(true);
         }
 
-        
+        if (howManyKeys == 1)
+        {
+            hudKey1.SetActive(true);
+        }
+        if (howManyKeys == 2)
+        {
+            hudKey2.SetActive(true);
+        }
+        if (howManyKeys == 3)
+        {
+            hudKey3.SetActive(true);
+        }
     }
 }

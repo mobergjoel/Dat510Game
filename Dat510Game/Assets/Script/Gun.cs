@@ -7,6 +7,8 @@ public class Gun : MonoBehaviour
     public float range = 100f;
 
     public Camera fpsCam;
+    public AudioSource gunShoot;
+
 
     public ParticleSystem muzzleFlash;
     // Start is called before the first frame update
@@ -27,12 +29,12 @@ public class Gun : MonoBehaviour
     void Shoot()
     {
         muzzleFlash.Play();
-
+        gunShoot.Play();
         RaycastHit hit;
         int layerMask = ~LayerMask.GetMask("ReachTool");
         if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, range, layerMask))
         {
-            Debug.Log(hit.transform.name);
+            //Debug.Log(hit.transform.name);
 
             Enemy enemy = hit.transform.GetComponent<Enemy>();
             if (enemy != null)

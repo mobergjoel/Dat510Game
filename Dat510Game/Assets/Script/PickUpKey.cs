@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,7 +52,6 @@ public class PickUpKey : MonoBehaviour
             pickUpText.SetActive(false);
             chest.howManyKeys++;
         }
-
         
     }
 }

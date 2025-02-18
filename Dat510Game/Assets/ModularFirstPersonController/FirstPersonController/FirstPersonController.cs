@@ -58,6 +58,8 @@ public class FirstPersonController : MonoBehaviour
     public bool playerCanMove = true;
     public float walkSpeed = 5f;
     public float maxVelocityChange = 10f;
+    public AudioSource walkingSound;
+
 
     // Internal Variables
     private bool isWalking = false;
@@ -382,6 +384,8 @@ public class FirstPersonController : MonoBehaviour
             else
             {
                 isWalking = false;
+                walkingSound.Play();
+
             }
 
             // All movement calculations shile sprint is active
@@ -656,6 +660,12 @@ public class FirstPersonController : MonoBehaviour
             EditorGUILayout.PrefixLabel(new GUIContent("Bar BG", "Object to be used as sprint bar background."));
             fpc.sprintBarBG = (Image)EditorGUILayout.ObjectField(fpc.sprintBarBG, typeof(Image), true);
             EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel(new GUIContent("Walking Sound ", "Sound when player walks."));
+            fpc.walkingSound = (AudioSource)EditorGUILayout.ObjectField(fpc.walkingSound,typeof(AudioSource), true);
+            EditorGUILayout.EndHorizontal();
+
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel(new GUIContent("Bar", "Object to be used as sprint bar foreground."));
