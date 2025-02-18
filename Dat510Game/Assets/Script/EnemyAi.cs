@@ -27,6 +27,20 @@ public class EnemyAi : MonoBehaviour
 
     Animator animator;
     public FirstPersonController playerScript;
+    public AudioSource monsterSound1;
+    public AudioSource monsterSound2;
+    public AudioSource monsterSound3;
+    public AudioSource monsterSound4;
+    public AudioSource monsterSound5;
+    public AudioSource monsterSound6;
+    public AudioSource monsterSound7;
+    public AudioSource monsterSound8;
+    public AudioSource monsterSound9;
+    public AudioSource monsterSound10;
+    public AudioSource monsterSound11;
+
+    public float screamCooldown = 20f; // Time in seconds between screams
+    private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
     private void Awake()
     {
@@ -71,6 +85,11 @@ public class EnemyAi : MonoBehaviour
 
     private void Patroling()
     {
+        if (Time.time - lastScreamTime >= screamCooldown)
+        {
+            monsterSound4.Play();
+            lastScreamTime = Time.time; // Update the last shoot time
+        }
         animator.SetBool("isInRange", false);
         if (!walkPointSet) SearchWalkPoint();
 
@@ -102,6 +121,11 @@ public class EnemyAi : MonoBehaviour
 
     private void ChasePlayer()
     {
+        if (Time.time - lastScreamTime >= screamCooldown/4)
+        {
+            monsterSound1.Play();
+            lastScreamTime = Time.time; // Update the last shoot time
+        }
         animator.SetBool("isInRange", true);
         agent.SetDestination(player.position);
     }
@@ -132,6 +156,11 @@ public class EnemyAi : MonoBehaviour
 
     public void walkToPlayer()
     {
+        if (Time.time - lastScreamTime >= screamCooldown/10)
+        {
+            monsterSound11.Play();
+            lastScreamTime = Time.time; // Update the last shoot time
+        }
         walkPoint = player.transform.position;
     }
 
