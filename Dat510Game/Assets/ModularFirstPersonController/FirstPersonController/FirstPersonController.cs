@@ -63,7 +63,7 @@ public class FirstPersonController : MonoBehaviour
 
 
     // Internal Variables
-    private bool isWalking = false;
+    public bool isWalking = false;
 
     #region Sprint
 
@@ -86,7 +86,7 @@ public class FirstPersonController : MonoBehaviour
 
     // Internal Variables
     private CanvasGroup sprintBarCG;
-    private bool isSprinting = false;
+    public bool isSprinting = false;
     private float sprintRemaining;
     private float sprintBarWidth;
     private float sprintBarHeight;
@@ -115,7 +115,7 @@ public class FirstPersonController : MonoBehaviour
     public float speedReduction = .5f;
 
     // Internal Variables
-    private bool isCrouched = false;
+    public bool isCrouched = false;
     private Vector3 originalScale;
 
     #endregion
@@ -298,7 +298,7 @@ public class FirstPersonController : MonoBehaviour
             else
             {
                 // Regain sprint while not sprinting
-                sprintRemaining = Mathf.Clamp(sprintRemaining += 1 * Time.deltaTime, 0, sprintDuration);
+                sprintRemaining = Mathf.Clamp(sprintRemaining += (1 * Time.deltaTime)/3, 0, sprintDuration);
             }
 
             // Handles sprint cooldown 
@@ -376,9 +376,15 @@ public class FirstPersonController : MonoBehaviour
             // Calculate how fast we should be moving
             Vector3 targetVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
+            // Normalisera targetVelocity om dess magnitud är större än 1
+            if (targetVelocity.magnitude > 1)
+            {
+                targetVelocity = targetVelocity.normalized;
+            }
+
             // Checks if player is walking and isGrounded
             // Will allow head bob
-            if (targetVelocity.x != 0 || targetVelocity.z != 0 && isGrounded)
+            if ((targetVelocity.x != 0 || targetVelocity.z != 0) && isGrounded)
             {
                 isWalking = true;
             }
@@ -386,10 +392,9 @@ public class FirstPersonController : MonoBehaviour
             {
                 isWalking = false;
                 walkingSound.Play();
-
             }
 
-            // All movement calculations shile sprint is active
+            // All movement calculations while sprint is active
             if (enableSprint && Input.GetKey(sprintKey) && sprintRemaining > 0f && !isSprintCooldown)
             {
                 targetVelocity = transform.TransformDirection(targetVelocity) * sprintSpeed;
@@ -401,8 +406,8 @@ public class FirstPersonController : MonoBehaviour
                 velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
                 velocityChange.y = 0;
 
-                // Player is only moving when valocity change != 0
-                // Makes sure fov change only happens during movement
+                // Player is only moving when velocity change != 0
+                // Makes sure FOV change only happens during movement
                 if (velocityChange.x != 0 || velocityChange.z != 0)
                 {
                     isSprinting = true;
@@ -420,14 +425,21 @@ public class FirstPersonController : MonoBehaviour
 
                 rb.AddForce(velocityChange, ForceMode.VelocityChange);
             }
-            // All movement calculations while walking
-            else
-            {
+
+        // All movement calculations while walking
+        else
+        {
                 isSprinting = false;
 
                 if (hideBarWhenFull && sprintRemaining == sprintDuration)
                 {
                     sprintBarCG.alpha -= 3 * Time.deltaTime;
+                }
+
+                // Om targetVelocity inte är noll, normalisera det för att hålla konstant hastighet
+                if (targetVelocity.magnitude > 1)
+                {
+                    targetVelocity = targetVelocity.normalized;
                 }
 
                 targetVelocity = transform.TransformDirection(targetVelocity) * walkSpeed;
@@ -440,6 +452,7 @@ public class FirstPersonController : MonoBehaviour
                 velocityChange.y = 0;
 
                 rb.AddForce(velocityChange, ForceMode.VelocityChange);
+
             }
         }
 

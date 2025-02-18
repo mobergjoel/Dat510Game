@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Gun : MonoBehaviour
 {
@@ -8,13 +9,15 @@ public class Gun : MonoBehaviour
 
     public Camera fpsCam;
     public AudioSource gunShoot;
+    public EnemyAi monster;
+
 
 
     public ParticleSystem muzzleFlash;
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -42,5 +45,6 @@ public class Gun : MonoBehaviour
                 enemy.TakeDamage(damage);
             }
         }
+        monster.walkToPlayer();
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class NewBehaviourScript : MonoBehaviour
+public class EnemyAi : MonoBehaviour
 {
     public NavMeshAgent agent;
 
@@ -21,10 +21,12 @@ public class NewBehaviourScript : MonoBehaviour
     bool alreadyAttacked;
 
     //States
-    public float sightRange, attackRange;
+    public float stationaryCrouchSightRange, stationarySightRange, crouchSightRange, walkSightRange, sprintSightRange, attackRange;
+    private float sightRange;
     public bool playerInSightRange, playerInAttackRange;
 
     Animator animator;
+    public FirstPersonController playerScript;
 
     private void Awake()
     {
@@ -35,6 +37,29 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void Update()
     {
+        if(playerScript.isWalking)
+        {
+            if(playerScript.isCrouched)
+            {
+                sightRange = crouchSightRange;
+            }
+            else
+            {
+                sightRange = walkSightRange;
+            }  
+        }
+        else if(playerScript.isSprinting) 
+        {
+            sightRange = sprintSightRange;
+        }
+        else if (playerScript.isCrouched && !playerScript.isWalking)
+        {
+            sightRange = stationaryCrouchSightRange;
+        }
+        else
+        {
+            sightRange = stationarySightRange;
+        }
         //Check for sight and attack range
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
@@ -103,6 +128,11 @@ public class NewBehaviourScript : MonoBehaviour
     private void ResetAttacked()
     {
         alreadyAttacked = false;
+    }
+
+    public void walkToPlayer()
+    {
+        walkPoint = player.transform.position;
     }
 
 }
