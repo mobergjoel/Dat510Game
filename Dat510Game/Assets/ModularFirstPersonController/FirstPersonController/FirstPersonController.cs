@@ -59,6 +59,7 @@ public class FirstPersonController : MonoBehaviour
     public float walkSpeed = 5f;
     public float maxVelocityChange = 10f;
     public AudioSource walkingSound;
+    public AudioSource jumpingSound;
 
 
     // Internal Variables
@@ -470,6 +471,8 @@ public class FirstPersonController : MonoBehaviour
         {
             rb.AddForce(0f, jumpPower, 0f, ForceMode.Impulse);
             isGrounded = false;
+            jumpingSound.Play();
+
         }
 
         // When crouched and using toggle system, will uncrouch for a jump
@@ -670,6 +673,11 @@ public class FirstPersonController : MonoBehaviour
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel(new GUIContent("Bar", "Object to be used as sprint bar foreground."));
             fpc.sprintBar = (Image)EditorGUILayout.ObjectField(fpc.sprintBar, typeof(Image), true);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel(new GUIContent("Jumping Sound ", "Sound when player Jumps."));
+            fpc.jumpingSound = (AudioSource)EditorGUILayout.ObjectField(fpc.jumpingSound, typeof(AudioSource), true);
             EditorGUILayout.EndHorizontal();
 
 
