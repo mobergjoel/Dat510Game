@@ -111,7 +111,7 @@ public class EnemyAi : MonoBehaviour
 
         // Check if the random point is on the NavMesh
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomPoint, out hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomPoint, out hit, 50f, NavMesh.AllAreas))
         {
             walkPoint = hit.position; // Set walkPoint to the closest valid NavMesh position
             walkPointSet = true;
@@ -156,7 +156,7 @@ public class EnemyAi : MonoBehaviour
 
     public void walkToPlayer()
     {
-        if (Time.time - lastScreamTime >= screamCooldown/10)
+        if (Time.time - lastScreamTime >= screamCooldown/5)
         {
             monsterSound11.Play();
             lastScreamTime = Time.time; // Update the last shoot time
