@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemyAi : MonoBehaviour
 {
@@ -41,6 +42,8 @@ public class EnemyAi : MonoBehaviour
 
     public float screamCooldown = 20f; // Time in seconds between screams
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
+
+    public GameObject MonsterJumpscare;
 
     private void Awake()
     {
@@ -137,6 +140,17 @@ public class EnemyAi : MonoBehaviour
 
         transform.LookAt(player);
 
+        gameObject.SetActive(false);
+
+        MonsterJumpscare.SetActive(true);
+
+        Invoke("loadGameOverScene", 1f);
+
+
+
+
+
+
         if (!alreadyAttacked)
         {
             //Attack code here
@@ -149,6 +163,15 @@ public class EnemyAi : MonoBehaviour
             Invoke(nameof(ResetAttacked), timeBetweenAttacks);
         }
     }
+
+    
+
+    private void loadGameOverScene()
+    { 
+        
+        SceneManager.LoadScene("GameOverScene");
+    }
+
     private void ResetAttacked()
     {
         alreadyAttacked = false;
