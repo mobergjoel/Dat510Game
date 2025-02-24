@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
@@ -15,7 +16,16 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+        Debug.Log("Enemy died!");
+        Invoke("loadGameOver", 2f);
+        Debug.Log("Game Over!");
+    }
+
+    private void loadGameOver()
+    {
+        Debug.Log("Game Over loaded");
+        SceneManager.LoadScene("GameWinScene");
     }
     // Start is called before the first frame update
     void Start()

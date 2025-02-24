@@ -144,7 +144,7 @@ public class EnemyAi : MonoBehaviour
 
         MonsterJumpscare.SetActive(true);
 
-        Invoke("loadGameOverScene", 1f);
+        Invoke("loadGameOverScene", 3f);
 
 
 
