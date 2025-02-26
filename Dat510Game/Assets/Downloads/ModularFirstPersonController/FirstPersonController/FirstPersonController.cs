@@ -18,6 +18,7 @@ public class FirstPersonController : MonoBehaviour
 {
     private Rigidbody rb;
 
+    
     #region Camera Movement Variables
 
     public Camera playerCamera;
@@ -54,12 +55,14 @@ public class FirstPersonController : MonoBehaviour
     #endregion
 
     #region Movement Variables
-
+    
     public bool playerCanMove = true;
     public float walkSpeed = 5f;
     public float maxVelocityChange = 10f;
     public AudioSource walkingSound;
     public AudioSource jumpingSound;
+
+   
 
 
     // Internal Variables
@@ -205,10 +208,12 @@ public class FirstPersonController : MonoBehaviour
 
     private void Update()
     {
-        #region Camera
 
-        // Control camera movement
-        if(cameraCanMove)
+        
+            #region Camera
+
+            // Control camera movement
+            if (cameraCanMove)
         {
             yaw = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * mouseSensitivity;
 
@@ -298,7 +303,7 @@ public class FirstPersonController : MonoBehaviour
             else
             {
                 // Regain sprint while not sprinting
-                sprintRemaining = Mathf.Clamp(sprintRemaining += (1 * Time.deltaTime)/3, 0, sprintDuration);
+                sprintRemaining = Mathf.Clamp(sprintRemaining += (1 * Time.deltaTime)/5, 0, sprintDuration);
             }
 
             // Handles sprint cooldown 

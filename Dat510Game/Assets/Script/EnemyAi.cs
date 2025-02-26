@@ -22,12 +22,13 @@ public class EnemyAi : MonoBehaviour
     bool alreadyAttacked;
 
     //States
-    public float stationaryCrouchSightRange, stationarySightRange, crouchSightRange, walkSightRange, sprintSightRange, attackRange;
+    public float stationaryCrouchSightRange, stationarySightRange, crouchSightRange, walkSightRange, sprintSightRange, attackRange, flashLightRange;
     private float sightRange;
     public bool playerInSightRange, playerInAttackRange;
 
     Animator animator;
     public FirstPersonController playerScript;
+    public FlashLight flashLightScript;
     public AudioSource monsterSound1;
     public AudioSource monsterSound2;
     public AudioSource monsterSound3;
@@ -39,6 +40,9 @@ public class EnemyAi : MonoBehaviour
     public AudioSource monsterSound9;
     public AudioSource monsterSound10;
     public AudioSource monsterSound11;
+
+    private bool ChasePlayerBool = false;
+    
 
     public float screamCooldown = 20f; // Time in seconds between screams
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
@@ -54,7 +58,12 @@ public class EnemyAi : MonoBehaviour
 
     private void Update()
     {
-        if(playerScript.isWalking)
+        Debug.Log(ChasePlayerBool);
+        if (flashLightScript.getFlashLightOn()) 
+        {
+            sightRange = flashLightRange;
+        }
+        else if(playerScript.isWalking)
         {
             if(playerScript.isCrouched)
             {
@@ -81,13 +90,25 @@ public class EnemyAi : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!playerInSightRange && !playerInAttackRange) Patroling();
+        if (!playerInSightRange && !playerInAttackRange)
+        {
+            if (ChasePlayerBool)
+            {
+                walkToPlayer();
+            }
+            else 
+            {
+                Patroling();
+            }
+        }
+           
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         if (playerInSightRange && playerInAttackRange) AttackPlayer();
     }
 
     private void Patroling()
     {
+           
         if (Time.time - lastScreamTime >= screamCooldown)
         {
             monsterSound4.Play();
@@ -124,6 +145,8 @@ public class EnemyAi : MonoBehaviour
 
     private void ChasePlayer()
     {
+        ChasePlayerBool = true;
+        
         if (Time.time - lastScreamTime >= screamCooldown/4)
         {
             monsterSound1.Play();
@@ -185,6 +208,8 @@ public class EnemyAi : MonoBehaviour
             lastScreamTime = Time.time; // Update the last shoot time
         }
         walkPoint = player.transform.position;
+        walkPointSet = true;
+        ChasePlayerBool = false;
     }
 
 }
