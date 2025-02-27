@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PickUpKey : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class PickUpKey : MonoBehaviour
     public GameObject pickUpText;
     public AudioSource keySound;
     public OpenBoxScript chest;
+    public NavMeshAgent monster;
 
     public bool inReach;
 
@@ -51,6 +53,7 @@ public class PickUpKey : MonoBehaviour
             invOB.SetActive(true);
             pickUpText.SetActive(false);
             chest.howManyKeys++;
+            monster.speed = (float)(monster.speed * 1.2);
         }
         
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -58,7 +59,7 @@ public class EnemyAi : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(ChasePlayerBool);
+        
         if (flashLightScript.getFlashLightOn()) 
         {
             sightRange = flashLightRange;
@@ -90,7 +91,12 @@ public class EnemyAi : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!playerInSightRange && !playerInAttackRange)
+        if (!agent.isOnNavMesh)
+        {
+            Debug.Log("Monster är inte på NavMesh!");
+        }
+
+        else if (!playerInSightRange && !playerInAttackRange)
         {
             if (ChasePlayerBool)
             {
