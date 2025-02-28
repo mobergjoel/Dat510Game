@@ -13,8 +13,11 @@ public class PickUpGun : MonoBehaviour
     public bool inReach;
 
 
+    Animator animator;
+
     void Start()
     {
+        animator = GetComponent<Animator>();
         inReach = false;
         pickUpText.SetActive(false);
         invOB.SetActive(false);
@@ -50,9 +53,12 @@ public class PickUpGun : MonoBehaviour
             pickUpGunSound.Play();
             invOB.SetActive(true);
             pickUpText.SetActive(false);
-        }
+            animator.SetBool("BossBattle", true);
 
+        }
+        Debug.Log("hejhej");
         
+
     }
 
 }

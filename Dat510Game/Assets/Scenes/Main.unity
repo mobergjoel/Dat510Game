@@ -17473,6 +17473,58 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae4e40571a130a0459daec567e503f34, type: 3}
+--- !u!1 &782941485
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 782941487}
+  - component: {fileID: 782941486}
+  m_Layer: 0
+  m_Name: BossBattle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &782941486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782941485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f6889359e99faa4fa72765ef91ac429, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrain: {fileID: 112645353}
+  monster: {fileID: 1647690706}
+  player: {fileID: 794581039}
+  waveSpeed: 10
+  waveWidth: 4
+  waveHeight: 0.001
+  waveLength: 10
+  affectedSize: 50
+--- !u!4 &782941487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782941485}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &784133941
 GameObject:
   m_ObjectHideFlags: 0
@@ -23448,6 +23500,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3, y: 10, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1034404380 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5833645148699582979, guid: ef69cefaa842bd54aa51f16778da08f3, type: 3}
+  m_PrefabInstance: {fileID: 1925541968}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1037939911
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -32167,6 +32224,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5833645148699688483, guid: ef69cefaa842bd54aa51f16778da08f3, type: 3}
   m_PrefabInstance: {fileID: 1925541968}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1198197293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1034404380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &1200336847 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1000011073071200, guid: 7bf1a4b26f0d5e7419b64deced1cecd3, type: 3}
@@ -43140,6 +43216,7 @@ MonoBehaviour:
   monsterSound11: {fileID: 496255385}
   screamCooldown: 10
   MonsterJumpscare: {fileID: 642614670}
+  groundAttack: {fileID: 782941486}
 --- !u!114 &1647690701
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -46481,7 +46558,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4459864850019384738, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 4459864850019384738, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       propertyPath: m_LocalPosition.z
@@ -51024,7 +51101,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5833645148699582979, guid: ef69cefaa842bd54aa51f16778da08f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1198197293}
   m_SourcePrefab: {fileID: 100100000, guid: ef69cefaa842bd54aa51f16778da08f3, type: 3}
 --- !u!1001 &1932141354
 PrefabInstance:
@@ -57165,3 +57245,4 @@ SceneRoots:
   - {fileID: 260438596}
   - {fileID: 1260153059}
   - {fileID: 1876764339}
+  - {fileID: 782941487}

@@ -48,7 +48,11 @@ public class EnemyAi : MonoBehaviour
     public float screamCooldown = 20f; // Time in seconds between screams
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
+    private float lastGroundAttack = 0f;
+    private float AttackCoolDown = 8f;
+
     public GameObject MonsterJumpscare;
+    public GroundAttack groundAttack;
 
     private void Awake()
     {
@@ -60,7 +64,11 @@ public class EnemyAi : MonoBehaviour
     private void Update()
     {
         
-        if (flashLightScript.getFlashLightOn()) 
+        if (animator.GetBool("BossBattle"))
+        {
+            sightRange = sprintSightRange;
+        }
+        else if (flashLightScript.getFlashLightOn()) 
         {
             sightRange = flashLightRange;
         }
@@ -151,15 +159,48 @@ public class EnemyAi : MonoBehaviour
 
     private void ChasePlayer()
     {
-        ChasePlayerBool = true;
-        
-        if (Time.time - lastScreamTime >= screamCooldown/4)
+        if (animator.GetBool("BossBattle"))
         {
-            monsterSound1.Play();
-            lastScreamTime = Time.time; // Update the last shoot time
+           
+            agent.SetDestination(transform.position);
+            transform.LookAt(player);
+            if (Time.time - lastGroundAttack >= AttackCoolDown)
+            {
+                
+                GroundAttack();
+                lastGroundAttack = Time.time; // Update the last shoot time
+                
+            }
+            else
+            {
+                animator.SetBool("GroundAttack", false);
+            }
+            
+        }
+        else
+        {
+            if (Time.time - lastScreamTime >= screamCooldown / 4)
+            {
+                monsterSound1.Play();
+                lastScreamTime = Time.time; // Update the last shoot time
+            }
+            
+            agent.SetDestination(player.position);
         }
         animator.SetBool("isInRange", true);
-        agent.SetDestination(player.position);
+        ChasePlayerBool = true;
+
+    }
+
+    private void GroundAttack()
+    {
+        animator.SetBool("GroundAttack", true); // Börja markattackanimationen
+
+        // Vänta i 5 sekunder
+        
+
+        // Anropa metoden för att trigga markattack-vågen
+        groundAttack.TriggerWave();
     }
 
     private void AttackPlayer()
@@ -216,6 +257,7 @@ public class EnemyAi : MonoBehaviour
         walkPoint = player.transform.position;
         walkPointSet = true;
         ChasePlayerBool = false;
+        animator.SetBool("isInRange", false);
     }
 
 }
