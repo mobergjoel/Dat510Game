@@ -6,13 +6,15 @@ public class Gun : MonoBehaviour
 {
     public float damage = 10f;
     public float range = 100f;
+    public float fireRate = 10f;
 
     public Camera fpsCam;
     public AudioSource gunShoot;
     public EnemyAi monster;
 
-    public float shootCooldown = 1f; // Time in seconds between shots
-    private float lastShootTime = 0f; // Keeps track of the last time the player shot
+    public float nextTimeToFire = 0f;
+    
+
 
     public ParticleSystem muzzleFlash;
     // Start is called before the first frame update
@@ -25,10 +27,11 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1") && Time.time - lastShootTime >= shootCooldown)
+        if (Input.GetButtonDown("Fire1") && Time.time >= nextTimeToFire)
         {
+            nextTimeToFire = Time.time + (5f / fireRate);
             Shoot();
-            lastShootTime = Time.time; // Update the last shoot time
+            
         }
     }
 

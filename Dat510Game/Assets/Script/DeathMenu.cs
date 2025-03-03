@@ -20,4 +20,14 @@ public class DeathMenu : MonoBehaviour
     {
         Application.Quit();
     }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void Controls()
+    {
+        SceneManager.LoadScene("Controls");
+    }
 }

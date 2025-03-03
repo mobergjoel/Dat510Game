@@ -44089,10 +44089,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 10
   range: 100
+  fireRate: 15
   fpsCam: {fileID: 1140813981}
   gunShoot: {fileID: 2004059902}
   monster: {fileID: 1647690700}
-  shootCooldown: 0.4
+  nextTimeToFire: 0
   muzzleFlash: {fileID: 1151425453}
 --- !u!1001 &1672348193
 PrefabInstance:
@@ -54662,6 +54663,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChestKey3
       objectReference: {fileID: 0}
+    - target: {fileID: 8723339855118185512, guid: aa6385b34a649bd46b4fc742d7a27892, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -55391,6 +55396,10 @@ PrefabInstance:
     - target: {fileID: 8241956659441681989, guid: 76b872cded13fb24b837ef63006d9b0e, type: 3}
       propertyPath: m_Name
       value: ChestKey2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8241956659441681989, guid: 76b872cded13fb24b837ef63006d9b0e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -57171,6 +57180,10 @@ PrefabInstance:
     - target: {fileID: 3336398602524342979, guid: 351951cba2bba504fa889d0115eef58b, type: 3}
       propertyPath: m_Name
       value: chest
+      objectReference: {fileID: 0}
+    - target: {fileID: 4007688766998341514, guid: 351951cba2bba504fa889d0115eef58b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4479811258169678959, guid: 351951cba2bba504fa889d0115eef58b, type: 3}
       propertyPath: invOB
