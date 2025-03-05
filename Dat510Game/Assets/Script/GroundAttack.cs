@@ -33,7 +33,7 @@ public class GroundAttack : MonoBehaviour
     {
         Vector3 monsterPos = monster.position;
         Vector3 playerPos = player.position;
-        Vector3 waveDirection = (playerPos - monsterPos).normalized;
+        Vector3 waveDirection = monster.forward;
 
         float waveStartTime = Time.time;
         float waveDistance = 0f;
@@ -48,7 +48,6 @@ public class GroundAttack : MonoBehaviour
 
         // Store the original terrain heights for resetting later
         originalHeights = terrainData.GetHeights(startX, startY, affectedSize, affectedSize);
-        Debug.Log("Tjablaaaa");
         while (waveDistance < waveLength)
         {
             waveDistance = (Time.time - waveStartTime) * waveSpeed;
@@ -72,7 +71,10 @@ public class GroundAttack : MonoBehaviour
 
                 // Calculate wave center moving forward
                 Vector3 waveCenter = origin + direction * distance;
-                float distToWave = Mathf.Abs(Vector3.Dot(worldPos - waveCenter, Vector3.Cross(direction, Vector3.up)));
+                Debug.DrawLine(origin, waveCenter, Color.red, 5f);
+
+                float distToWave = Mathf.Abs(Vector3.Dot(worldPos - waveCenter, direction));
+
 
                 if (distToWave < waveWidth / 2f)  // Only modify terrain within wave width
                 {

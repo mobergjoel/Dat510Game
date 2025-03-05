@@ -11,6 +11,8 @@ public class EnemyAi : MonoBehaviour
 
     public Transform player;
 
+    public PlayerHealth Health;
+
     public LayerMask whatIsGround, whatIsPlayer;
 
     //Patroling
@@ -23,7 +25,7 @@ public class EnemyAi : MonoBehaviour
     bool alreadyAttacked;
 
     //States
-    public float stationaryCrouchSightRange, stationarySightRange, crouchSightRange, walkSightRange, sprintSightRange, attackRange, flashLightRange;
+    public float stationaryCrouchSightRange, stationarySightRange, crouchSightRange, walkSightRange, sprintSightRange, attackRange, flashLightRange, searchRange;
     private float sightRange;
     public bool playerInSightRange, playerInAttackRange;
 
@@ -49,16 +51,31 @@ public class EnemyAi : MonoBehaviour
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
     private float lastGroundAttack = 0f;
-    private float AttackCoolDown = 8f;
+    private float GroundAttackCoolDown = 20f;
+
+    private float lastThrowAttack = 0f;
+    private float throwAttackCoolDown = 8f;
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
+
+    public float distanceForProjectileThrow = 10;
+    public float timeBetweenProjectileThrows = 5;
+    public int damageForProjectile = 100;
+    public float projectileThrowAnimationTimeOffset = 0f;
+    public GameObject projectile;
+    Rigidbody projectileRB;
+
+    Vector3 projectileOrigin;
 
     private void Awake()
     {
         player = GameObject.Find("PlayerObj").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        projectile = transform.Find("Projectile").gameObject;
+        projectileRB = projectile.GetComponent<Rigidbody>();
+        projectileOrigin = new Vector3(projectile.transform.localPosition.x, projectile.transform.localPosition.y, projectile.transform.localPosition.z);
     }
 
     private void Update()
@@ -66,7 +83,7 @@ public class EnemyAi : MonoBehaviour
         
         if (animator.GetBool("BossBattle"))
         {
-            sightRange = sprintSightRange;
+            sightRange = walkSightRange;
         }
         else if (flashLightScript.getFlashLightOn()) 
         {
@@ -164,16 +181,22 @@ public class EnemyAi : MonoBehaviour
            
             agent.SetDestination(transform.position);
             transform.LookAt(player);
-            if (Time.time - lastGroundAttack >= AttackCoolDown)
+            if (Time.time - lastGroundAttack >= GroundAttackCoolDown)
             {
                 
-                GroundAttack();
+                //GroundAttack();
                 lastGroundAttack = Time.time; // Update the last shoot time
                 
+            }
+            else if(Time.time - lastThrowAttack >= throwAttackCoolDown)
+            {
+                ThrowAttack();
+                lastThrowAttack = Time.time;
             }
             else
             {
                 animator.SetBool("GroundAttack", false);
+                
             }
             
         }
@@ -190,6 +213,12 @@ public class EnemyAi : MonoBehaviour
         animator.SetBool("isInRange", true);
         ChasePlayerBool = true;
 
+    }
+
+    private void ThrowAttack()
+    {
+        ResetProjectile();
+        StartCoroutine(ThrowProjectile());
     }
 
     private void GroundAttack()
@@ -260,4 +289,32 @@ public class EnemyAi : MonoBehaviour
         animator.SetBool("isInRange", false);
     }
 
+    IEnumerator ThrowProjectile() 
+    {
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+        projectileRB.isKinematic = false;
+        projectile.transform.parent = null;
+        projectile.transform.LookAt(player);
+        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+        
+        
+
+        
+        
+    }
+    void ResetProjectile()
+    {
+        projectile.transform.parent = transform;
+        projectileRB.isKinematic = true;
+        projectile.transform.localPosition = new Vector3(projectileOrigin.x, projectileOrigin.y, projectileOrigin.z);
+
+    }
+    public void ProjectileCollision(Collision other)
+    {
+        if (other.transform.tag == "Player")
+        {
+            Health.Hit(damageForProjectile);
+        }
+    }
 }

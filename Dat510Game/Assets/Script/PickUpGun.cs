@@ -13,11 +13,10 @@ public class PickUpGun : MonoBehaviour
     public bool inReach;
 
 
-    Animator animator;
+    public Animator animator;
 
     void Start()
     {
-        animator = GetComponent<Animator>();
         inReach = false;
         pickUpText.SetActive(false);
         invOB.SetActive(false);
