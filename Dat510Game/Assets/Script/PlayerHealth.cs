@@ -25,7 +25,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void Hit(float damage)
     {
-        health -= damage;
+        health -= damage/2;
         healthBar.value = health;
     }
 }

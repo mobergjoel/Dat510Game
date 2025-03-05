@@ -43,3 +43,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: ShockWave
+    uniqueID: 644013731
+    locked: 0

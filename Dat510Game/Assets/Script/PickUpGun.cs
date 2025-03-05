@@ -60,7 +60,6 @@ public class PickUpGun : MonoBehaviour
             playerHealthBar.SetActive(true);
 
         }
-        Debug.Log("hejhej");
         
 
     }

@@ -50,11 +50,11 @@ public class EnemyAi : MonoBehaviour
     public float screamCooldown = 20f; // Time in seconds between screams
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
-    private float lastGroundAttack = 0f;
-    private float GroundAttackCoolDown = 20f;
+    private float lastStompAttack = 0f;
+    private float StompAttackCoolDown = 8f;
 
     private float lastThrowAttack = 0f;
-    private float throwAttackCoolDown = 8f;
+    private float throwAttackCoolDown = 6f;
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
@@ -62,11 +62,24 @@ public class EnemyAi : MonoBehaviour
     public float distanceForProjectileThrow = 10;
     public float timeBetweenProjectileThrows = 5;
     public float damageForProjectile = 25;
+    public float damageForStomp = 35;
     public float projectileThrowAnimationTimeOffset = 0f;
+    public float shockWaveAnimationTimeOffset = 0.7f;
     public GameObject projectile;
     Rigidbody projectileRB;
 
     Vector3 projectileOrigin;
+
+    ParticleSystem shockWavePS;
+    float distanceToPlayer;
+    public float distanceForStomp = 20;
+    float countdownTimer;
+    float monsterSpeed;
+    float monsteracceleration;
+    float lastAttackCoolDown = 4;
+    float lastAttack = 0f;
+    bool searchingFarAway = true;
+    
 
     private void Awake()
     {
@@ -76,11 +89,15 @@ public class EnemyAi : MonoBehaviour
         projectile = transform.Find("Projectile").gameObject;
         projectileRB = projectile.GetComponent<Rigidbody>();
         projectileOrigin = new Vector3(projectile.transform.localPosition.x, projectile.transform.localPosition.y, projectile.transform.localPosition.z);
+        shockWavePS = transform.Find("ShockWave").GetChild(0).GetComponent<ParticleSystem>();
+        monsteracceleration = agent.acceleration;
+        projectile.SetActive(false);
     }
 
     private void Update()
     {
-        
+        distanceToPlayer = Vector3.Distance(player.position, transform.position);
+
         if (animator.GetBool("BossBattle"))
         {
             sightRange = walkSightRange;
@@ -135,6 +152,22 @@ public class EnemyAi : MonoBehaviour
            
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        if(distanceToPlayer > 100 && searchingFarAway)
+        {
+            monsterSpeed = agent.speed;
+            agent.speed = agent.speed * 2;
+            agent.acceleration = agent.speed * 1000;
+            searchingFarAway = false;
+           
+        }
+        else
+        {
+            agent.speed = monsterSpeed;
+            agent.acceleration = monsteracceleration;
+            searchingFarAway = true;
+        }
+
+        
     }
 
     private void Patroling()
@@ -178,27 +211,24 @@ public class EnemyAi : MonoBehaviour
     {
         if (animator.GetBool("BossBattle"))
         {
-           
+           projectile.SetActive(true);
             agent.SetDestination(transform.position);
             transform.LookAt(player);
-            if (Time.time - lastGroundAttack >= GroundAttackCoolDown)
+
+            if (Time.time - lastStompAttack >= StompAttackCoolDown && Time.time - lastAttack >= lastAttackCoolDown && distanceToPlayer <= distanceForStomp)
             {
-                
-                //GroundAttack();
-                lastGroundAttack = Time.time; // Update the last shoot time
-                
+                StartCoroutine(StompShockWave());
+                lastStompAttack = Time.time;
+                lastAttack = Time.time;
             }
-            else if(Time.time - lastThrowAttack >= throwAttackCoolDown)
+            else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastAttackCoolDown)
             {
                 ThrowAttack();
                 lastThrowAttack = Time.time;
+                lastAttack = Time.time;
             }
-            else
-            {
-                animator.SetBool("GroundAttack", false);
-                
-            }
-            
+
+
         }
         else
         {
@@ -288,6 +318,16 @@ public class EnemyAi : MonoBehaviour
         ChasePlayerBool = false;
         animator.SetBool("isInRange", false);
     }
+    IEnumerator StompShockWave()
+    {
+        animator.SetTrigger("Jump");
+
+        yield return new WaitForSeconds(shockWaveAnimationTimeOffset);
+
+        shockWavePS.Play();
+    }
+
+    
 
     IEnumerator ThrowProjectile() 
     {
@@ -317,4 +357,16 @@ public class EnemyAi : MonoBehaviour
             Health.Hit(damageForProjectile);
         }
     }
+
+    public void ShockWaveCollision(GameObject other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Health.Hit(damageForStomp);
+        }
+    }
+    
+
+
+
 }
