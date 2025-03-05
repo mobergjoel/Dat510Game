@@ -61,7 +61,7 @@ public class EnemyAi : MonoBehaviour
 
     public float distanceForProjectileThrow = 10;
     public float timeBetweenProjectileThrows = 5;
-    public int damageForProjectile = 100;
+    public float damageForProjectile = 25;
     public float projectileThrowAnimationTimeOffset = 0f;
     public GameObject projectile;
     Rigidbody projectileRB;

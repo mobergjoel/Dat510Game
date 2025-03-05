@@ -12,6 +12,9 @@ public class PickUpGun : MonoBehaviour
 
     public bool inReach;
 
+    public GameObject bossHealthBar;
+    public GameObject playerHealthBar;
+
 
     public Animator animator;
 
@@ -53,6 +56,8 @@ public class PickUpGun : MonoBehaviour
             invOB.SetActive(true);
             pickUpText.SetActive(false);
             animator.SetBool("BossBattle", true);
+            bossHealthBar.SetActive(true);
+            playerHealthBar.SetActive(true);
 
         }
         Debug.Log("hejhej");
