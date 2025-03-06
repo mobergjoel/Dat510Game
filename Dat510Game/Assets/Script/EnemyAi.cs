@@ -51,10 +51,13 @@ public class EnemyAi : MonoBehaviour
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
     private float lastStompAttack = 0f;
-    private float StompAttackCoolDown = 8f;
+    private float StompAttackCoolDown = 7f;
+
+    private float lastRushAttack = 0f;
+    private float rushAttackCoolDown = 12f;
 
     private float lastThrowAttack = 0f;
-    private float throwAttackCoolDown = 6f;
+    private float throwAttackCoolDown = 3f;
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
@@ -63,6 +66,7 @@ public class EnemyAi : MonoBehaviour
     public float timeBetweenProjectileThrows = 5;
     public float damageForProjectile = 25;
     public float damageForStomp = 35;
+    public float damageForRush = 60;
     public float projectileThrowAnimationTimeOffset = 0f;
     public float shockWaveAnimationTimeOffset = 0.7f;
     public GameObject projectile;
@@ -72,14 +76,20 @@ public class EnemyAi : MonoBehaviour
 
     ParticleSystem shockWavePS;
     float distanceToPlayer;
-    public float distanceForStomp = 20;
+    public float distanceForStomp = 10;
     float countdownTimer;
     float monsterSpeed;
     float monsteracceleration;
-    float lastAttackCoolDown = 4;
+    float lastThrowAttackCoolDown = 3.5f;
+    float lastStompAttackCoolDown = 4f;
     float lastAttack = 0f;
+    float lastRushAttackCoolDown = 5f;
     bool searchingFarAway = true;
-    
+    public bool canAttack = true;
+    bool RushAttackBool = false;
+    bool throwAttackBool = false;
+    bool fromWalkToPlayerToBossBattle = true;
+
 
     private void Awake()
     {
@@ -143,6 +153,12 @@ public class EnemyAi : MonoBehaviour
             if (ChasePlayerBool)
             {
                 walkToPlayer();
+                if (animator.GetBool("BossBattle"))
+                {
+                    fromWalkToPlayerToBossBattle = true;
+                    RushAttackBool = false;
+                }
+                
             }
             else 
             {
@@ -150,8 +166,11 @@ public class EnemyAi : MonoBehaviour
             }
         }
            
-        if (playerInSightRange && !playerInAttackRange) ChasePlayer();
-        if (playerInSightRange && playerInAttackRange) AttackPlayer();
+        if (playerInSightRange && (!playerInAttackRange || !canAttack)) ChasePlayer();
+        if (playerInSightRange && playerInAttackRange && canAttack) AttackPlayer();
+        
+
+
         if(distanceToPlayer > 100 && searchingFarAway)
         {
             monsterSpeed = agent.speed;
@@ -159,6 +178,11 @@ public class EnemyAi : MonoBehaviour
             agent.acceleration = agent.speed * 1000;
             searchingFarAway = false;
            
+        }
+        else if (RushAttackBool)
+        {
+            
+            searchingFarAway = true;
         }
         else
         {
@@ -206,27 +230,70 @@ public class EnemyAi : MonoBehaviour
         }
     }
 
-
+    
     private void ChasePlayer()
     {
         if (animator.GetBool("BossBattle"))
         {
-           projectile.SetActive(true);
-            agent.SetDestination(transform.position);
-            transform.LookAt(player);
+            if (fromWalkToPlayerToBossBattle)
+            {
+                lastAttack = Time.time;
+                fromWalkToPlayerToBossBattle = false;
+            }
+            if(!RushAttackBool)
+            {
+                agent.SetDestination(agent.transform.position);
+                transform.LookAt(player);
+            }
+            
 
-            if (Time.time - lastStompAttack >= StompAttackCoolDown && Time.time - lastAttack >= lastAttackCoolDown && distanceToPlayer <= distanceForStomp)
+            if (Time.time - lastStompAttack >= StompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && distanceToPlayer <= distanceForStomp && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool)
             {
                 StartCoroutine(StompShockWave());
                 lastStompAttack = Time.time;
                 lastAttack = Time.time;
             }
-            else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastAttackCoolDown)
+            else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool)
             {
-                ThrowAttack();
-                lastThrowAttack = Time.time;
+               
+                RushAttackBool = true;
+                RushAttack();
+                lastRushAttack = Time.time;
                 lastAttack = Time.time;
             }
+            else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool)
+            {
+                projectile.SetActive(true);
+                float random = Random.Range(0, 3);
+                if(random == 0) 
+                {
+                    Throw1Attack();
+                }
+                else if(random == 1)
+                {
+                    Throw2Attack();
+                }
+                else
+                {
+                    Throw3Attack();
+                }
+                throwAttackBool = true;
+                
+            }
+            
+            if(RushAttackBool)
+            {
+                Vector3 distanceToWalkPoint = transform.position - walkPoint;
+                if (distanceToWalkPoint.magnitude < 2f)
+                {
+                    animator.SetBool("RushAttack", false);
+                    RushAttackBool = false;
+                    agent.speed = monsterSpeed;
+                    agent.acceleration = monsteracceleration;
+                    walkPointSet = false;
+                }
+            }
+            
 
 
         }
@@ -245,10 +312,23 @@ public class EnemyAi : MonoBehaviour
 
     }
 
-    private void ThrowAttack()
+    
+
+    private void Throw1Attack()
     {
         ResetProjectile();
-        StartCoroutine(ThrowProjectile());
+        StartCoroutine(Throw1Projectile());
+    }
+
+    private void Throw2Attack()
+    {
+        ResetProjectile();
+        StartCoroutine(Throw2Projectile());
+    }
+    private void Throw3Attack()
+    {
+        ResetProjectile();
+        StartCoroutine(Throw3Projectile());
     }
 
     private void GroundAttack()
@@ -264,36 +344,21 @@ public class EnemyAi : MonoBehaviour
 
     private void AttackPlayer()
     {
-        //Make sure enemy does't move
-        agent.SetDestination(transform.position);
-
-        transform.LookAt(player);
-
-        gameObject.SetActive(false);
-
-        MonsterJumpscare.SetActive(true);
-
-        Invoke("loadGameOverScene", 3f);
-
-
-
-
-
-
-        if (!alreadyAttacked)
+        if (!animator.GetBool("BossBattle"))
         {
-            //Attack code here
+            //Make sure enemy does't move
+            agent.SetDestination(transform.position);
 
+            transform.LookAt(player);
 
-            //
+            gameObject.SetActive(false);
 
+            MonsterJumpscare.SetActive(true);
 
-            alreadyAttacked = true;
-            Invoke(nameof(ResetAttacked), timeBetweenAttacks);
-        }
+            Invoke("loadGameOverScene", 3f);
+        }  
     }
 
-    
 
     private void loadGameOverScene()
     { 
@@ -329,7 +394,21 @@ public class EnemyAi : MonoBehaviour
 
     
 
-    IEnumerator ThrowProjectile() 
+    IEnumerator Throw1Projectile() 
+    {
+        lastThrowAttack = Time.time;
+        lastAttack = Time.time;
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+        projectileRB.isKinematic = false;
+        projectile.transform.parent = null;
+        projectile.transform.LookAt(player);
+        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        throwAttackBool = false;
+ 
+    }
+    IEnumerator Throw2Projectile() 
     {
         animator.SetTrigger("Throw");
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
@@ -337,12 +416,75 @@ public class EnemyAi : MonoBehaviour
         projectile.transform.parent = null;
         projectile.transform.LookAt(player);
         projectileRB.AddForce(projectileRB.transform.forward * 1000);
-        
+
+        yield return new WaitForSeconds(2);
+        ResetProjectile();
+
+        lastThrowAttack = Time.time;
+        lastAttack = Time.time;
+
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+        projectileRB.isKinematic = false;
+        projectile.transform.parent = null;
+        projectile.transform.LookAt(player);
+        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        throwAttackBool = false;
+    }
+    IEnumerator Throw3Projectile()
+    {
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+        projectileRB.isKinematic = false;
+        projectile.transform.parent = null;
+        projectile.transform.LookAt(player);
+        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        yield return new WaitForSeconds(2);
+        ResetProjectile();
+
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+        projectileRB.isKinematic = false;
+        projectile.transform.parent = null;
+        projectile.transform.LookAt(player);
+        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        yield return new WaitForSeconds(2);
+        ResetProjectile();
+
+        lastThrowAttack = Time.time;
+        lastAttack = Time.time;
+        animator.SetTrigger("Throw");
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+        projectileRB.isKinematic = false;
+        projectile.transform.parent = null;
+        projectile.transform.LookAt(player);
+        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        throwAttackBool = false;
+    }
+    private void RushAttack()
+    {
+        animator.SetBool("RushAttack", true);
+        monsterSpeed = agent.speed;
+        agent.speed = 13;
+        agent.acceleration = agent.acceleration * 10;
+        agent.transform.LookAt(player);
+
+        Vector3 targetPosition = agent.transform.position + agent.transform.forward * 25f;
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(targetPosition, out hit, 50f, NavMesh.AllAreas))
+        {
+            walkPoint = hit.position; // Set walkPoint to the closest valid NavMesh position
+            walkPointSet = true;
+            agent.SetDestination(walkPoint);
+        }
         
 
-        
-        
     }
+
     void ResetProjectile()
     {
         projectile.transform.parent = transform;
@@ -365,8 +507,18 @@ public class EnemyAi : MonoBehaviour
             Health.Hit(damageForStomp);
         }
     }
-    
+    private void RushCollision(Collision other)
+    {
+        if (other.transform.tag == "Player")
+        {
+            Health.Hit(damageForRush);
+        }
+    }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        RushCollision(collision);
+    }
 
 
 }

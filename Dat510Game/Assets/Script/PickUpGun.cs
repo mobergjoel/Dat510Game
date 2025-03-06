@@ -18,6 +18,7 @@ public class PickUpGun : MonoBehaviour
     public AudioSource bossBattleMusic;
     public GameObject bossBattleLight;
     public BlinkingSkybox blinkingSkybox;
+    public EnemyAi monster;
 
 
     public Animator animator;
@@ -65,6 +66,7 @@ public class PickUpGun : MonoBehaviour
             bossBattleMusic.Play();
             bossBattleLight.SetActive(true);
             blinkingSkybox?.StartBlinking();
+            monster.canAttack = false;
 
 
         }
