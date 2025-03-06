@@ -15,6 +15,10 @@ public class PickUpGun : MonoBehaviour
     public GameObject bossHealthBar;
     public GameObject playerHealthBar;
 
+    public AudioSource bossBattleMusic;
+    public GameObject bossBattleLight;
+    public BlinkingSkybox blinkingSkybox;
+
 
     public Animator animator;
 
@@ -58,6 +62,10 @@ public class PickUpGun : MonoBehaviour
             animator.SetBool("BossBattle", true);
             bossHealthBar.SetActive(true);
             playerHealthBar.SetActive(true);
+            bossBattleMusic.Play();
+            bossBattleLight.SetActive(true);
+            blinkingSkybox?.StartBlinking();
+
 
         }
         
