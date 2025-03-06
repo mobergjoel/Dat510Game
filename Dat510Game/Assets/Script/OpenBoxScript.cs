@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class OpenBoxScript : MonoBehaviour
 {
-    public Animator boxOB;
+    public Animation boxOB;
     public GameObject keyOBNeeded1;
     public GameObject keyOBNeeded2;
     public GameObject keyOBNeeded3;
@@ -74,7 +74,8 @@ public class OpenBoxScript : MonoBehaviour
             hudKey3.SetActive(false);
             howManyKeys = 0;
             openSound.Play();
-            boxOB.SetBool("open", true);
+            //boxOB.SetBool("open", true);
+            boxOB.Play();
             openText.SetActive(false);
             keyMissingText.SetActive(false);
             isOpen = true;

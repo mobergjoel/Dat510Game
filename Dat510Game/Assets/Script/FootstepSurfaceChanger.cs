@@ -30,12 +30,30 @@ public class FootstepSurfaceChanger : MonoBehaviour
             {
                 if (surface.groundLayer == (surface.groundLayer | (1 << hitLayer)))
                 {
-                    footstepSource.clip = surface.footstepSound;
+                    if (footstepSource.clip != surface.footstepSound)
+                    {
+                        footstepSource.clip = surface.footstepSound;
+                    }
                     return;
                 }
             }
         }
-
-        footstepSource.clip = defaultFootstep;
+        if (footstepSource.clip != defaultFootstep)
+            {
+                footstepSource.clip = defaultFootstep;
+            }
     }
+    public void PlayFootstepSound()
+    {
+        if (!footstepSource.isPlaying) // Avoid replaying if already playing
+        {
+            footstepSource.Play();
+        }
+    }
+
+    public void StopFootstepSound()
+    {
+        footstepSource.Stop();
+    }
+
 }

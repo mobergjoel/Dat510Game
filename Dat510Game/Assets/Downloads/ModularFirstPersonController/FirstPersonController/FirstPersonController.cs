@@ -61,6 +61,7 @@ public class FirstPersonController : MonoBehaviour
     public float maxVelocityChange = 10f;
     public AudioSource walkingSound;
     public AudioSource jumpingSound;
+    public FootstepSurfaceChanger footstepSurfaceChanger;
 
    
 
@@ -392,11 +393,13 @@ public class FirstPersonController : MonoBehaviour
             if ((targetVelocity.x != 0 || targetVelocity.z != 0) && isGrounded)
             {
                 isWalking = true;
+                footstepSurfaceChanger.PlayFootstepSound();
+
             }
             else
             {
                 isWalking = false;
-                walkingSound.Play();
+                footstepSurfaceChanger.StopFootstepSound();
             }
 
             // All movement calculations while sprint is active
@@ -687,6 +690,10 @@ public class FirstPersonController : MonoBehaviour
             fpc.walkingSound = (AudioSource)EditorGUILayout.ObjectField(fpc.walkingSound,typeof(AudioSource), true);
             EditorGUILayout.EndHorizontal();
 
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.PrefixLabel(new GUIContent("ChangeWalking Code", "Code switching walking sound"));
+            fpc.footstepSurfaceChanger = (FootstepSurfaceChanger)EditorGUILayout.ObjectField(fpc.footstepSurfaceChanger,typeof(FootstepSurfaceChanger), true);
+            EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel(new GUIContent("Bar", "Object to be used as sprint bar foreground."));
