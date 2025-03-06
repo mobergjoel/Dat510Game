@@ -26,6 +26,8 @@ public class OpenBoxScript : MonoBehaviour
     public GameObject hudKey1;
     public GameObject hudKey2;
     public GameObject hudKey3;
+    public BlinkingSkybox blinkingSkybox;
+
 
     void Start()
     {
@@ -37,7 +39,7 @@ public class OpenBoxScript : MonoBehaviour
         hudKey1.SetActive(false);
         hudKey2.SetActive(false);
         hudKey3.SetActive(false);
-
+        blinkingSkybox.NoBlinking();
     }
 
 

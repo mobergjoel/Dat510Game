@@ -30,6 +30,7 @@ public class EnemyAi : MonoBehaviour
     public bool playerInSightRange, playerInAttackRange;
 
     Animator animator;
+    public Enemy enemy;
     public FirstPersonController playerScript;
     public FlashLight flashLightScript;
     public AudioSource monsterSound1;
@@ -96,6 +97,7 @@ public class EnemyAi : MonoBehaviour
         player = GameObject.Find("PlayerObj").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        enemy = GetComponent<Enemy>();
         projectile = transform.Find("Projectile").gameObject;
         projectileRB = projectile.GetComponent<Rigidbody>();
         projectileOrigin = new Vector3(projectile.transform.localPosition.x, projectile.transform.localPosition.y, projectile.transform.localPosition.z);
@@ -106,6 +108,12 @@ public class EnemyAi : MonoBehaviour
 
     private void Update()
     {
+        if (enemy.isDead)
+        {
+            // Disable NavMeshAgent and stop all actions
+            agent.enabled = false;
+            animator.SetBool("IsDead", true);
+        }
         distanceToPlayer = Vector3.Distance(player.position, transform.position);
 
         if (animator.GetBool("BossBattle"))
@@ -145,7 +153,7 @@ public class EnemyAi : MonoBehaviour
 
         if (!agent.isOnNavMesh)
         {
-            Debug.Log("Monster är inte på NavMesh!");
+            Debug.Log("Monster ï¿½r inte pï¿½ NavMesh!");
         }
 
         else if (!playerInSightRange && !playerInAttackRange)
@@ -333,12 +341,12 @@ public class EnemyAi : MonoBehaviour
 
     private void GroundAttack()
     {
-        animator.SetBool("GroundAttack", true); // Börja markattackanimationen
+        animator.SetBool("GroundAttack", true); // Bï¿½rja markattackanimationen
 
-        // Vänta i 5 sekunder
+        // Vï¿½nta i 5 sekunder
         
 
-        // Anropa metoden för att trigga markattack-vågen
+        // Anropa metoden fï¿½r att trigga markattack-vï¿½gen
         groundAttack.TriggerWave();
     }
 

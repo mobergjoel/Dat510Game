@@ -28,6 +28,7 @@ public class PickUpGun : MonoBehaviour
         inReach = false;
         pickUpText.SetActive(false);
         invOB.SetActive(false);
+
     }
 
 
@@ -65,7 +66,7 @@ public class PickUpGun : MonoBehaviour
             playerHealthBar.SetActive(true);
             bossBattleMusic.Play();
             bossBattleLight.SetActive(true);
-            blinkingSkybox?.StartBlinking();
+            blinkingSkybox.StartBlinking();
             monster.canAttack = false;
 
 

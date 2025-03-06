@@ -2,10 +2,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
     public float health = 50f;
+    Animator animator;
+
+    public bool isDead = false;
+    private void Awake() {
+        animator = GetComponent<Animator>();
+        animator.SetBool("IsDead", false);
+
+    }
 
     public Slider healthBar;
     public void TakeDamage(float amount)
@@ -14,15 +23,24 @@ public class Enemy : MonoBehaviour
         healthBar.value = health;
         if (health <= 0f)
         {
+            //play animation
             Die();
         }
     }
 
     void Die()
     {
+        isDead = true;
+        StartCoroutine(HandleDeath());
+
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        yield return new WaitForSeconds(4f);
         gameObject.SetActive(false);
         healthBar.gameObject.SetActive(false);
-        Invoke("loadGameOver", 2f);
+        Invoke("loadGameOver", 1f);
         Debug.Log("Game Over!");
     }
 

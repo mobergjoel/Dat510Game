@@ -6,23 +6,31 @@ public class BlinkingSkybox : MonoBehaviour
     public Color blinkColor = Color.red; // The red color for blinking
     public float blinkDuration = 0.5f;   // Time between blinks
 
-    private Color originalColor;
+    public Color originalColor = new Color(94f / 255f, 94f / 255f, 94f / 255f);
     private Material skyboxMaterial;
+    private Coroutine blinkCoroutine;
 
     private void Start()
     {
         if (RenderSettings.skybox != null)
         {
             skyboxMaterial = RenderSettings.skybox;
-            if (skyboxMaterial.HasProperty("_Tint")) // Procedural Skybox
+            SetSkyboxColor(originalColor);
+
+            /*if (skyboxMaterial.HasProperty("_Tint")) // Procedural Skybox
             {
                 originalColor = skyboxMaterial.GetColor("_Tint");
             }
             else if (skyboxMaterial.HasProperty("_Color")) // Regular Skybox
             {
                 originalColor = skyboxMaterial.GetColor("_Color");
-            }
+            }*/
         }
+    }
+
+    public void NoBlinking()
+    {
+        skyboxMaterial.SetColor("_Tint", originalColor);
     }
 
     public void StartBlinking()
