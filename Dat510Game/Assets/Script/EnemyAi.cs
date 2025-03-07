@@ -53,13 +53,16 @@ public class EnemyAi : MonoBehaviour
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
     private float lastStompAttack = 0f;
-    private float StompAttackCoolDown = 10f;
+    private float StompAttackCoolDown = 5f;
 
     private float lastRushAttack = 0f;
     private float rushAttackCoolDown = 12f;
 
     private float lastThrowAttack = 0f;
     private float throwAttackCoolDown = 1f;
+
+    private float lastRageAttack = 0f;
+    private float rageAttackCoolDown = 8f;
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
@@ -93,6 +96,8 @@ public class EnemyAi : MonoBehaviour
     bool fromWalkToPlayerToBossBattle = true;
     bool hasAttacked = false;
     bool inWalkBetweenAttacksMode = false;
+    MonsterShooter RageAttackScript;
+    bool RageAttackBool = false;
 
 
     private void Awake()
@@ -100,6 +105,7 @@ public class EnemyAi : MonoBehaviour
         player = GameObject.Find("PlayerObj").transform;
         animator = GetComponent<Animator>();
         enemy = GetComponent<Enemy>();
+        RageAttackScript = GetComponent<MonsterShooter>();
         projectile = transform.Find("Projectile").gameObject;
         projectileRB = projectile.GetComponent<Rigidbody>();
         projectileOrigin = new Vector3(projectile.transform.localPosition.x, projectile.transform.localPosition.y, projectile.transform.localPosition.z);
@@ -277,6 +283,13 @@ public class EnemyAi : MonoBehaviour
                     lastAttack = Time.time;
                     
                 }
+                else if (Time.time - lastRageAttack >= rageAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked)
+                {
+                    StartCoroutine(RageAttack());
+                    lastAttack = Time.time + 1.5f;
+
+                }
+
                 else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked)
                 {
 
@@ -286,6 +299,7 @@ public class EnemyAi : MonoBehaviour
                     lastAttack = Time.time;
                     
                 }
+                
                 else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked)
                 {
                     projectile.SetActive(true);
@@ -321,6 +335,10 @@ public class EnemyAi : MonoBehaviour
                     hasAttacked = true;
                 }
             }
+            else if (RageAttackBool)
+            {
+
+            }
             else
             {
                 transform.LookAt(player);
@@ -346,6 +364,20 @@ public class EnemyAi : MonoBehaviour
         animator.SetBool("isInRange", true);
         ChasePlayerBool = true;
 
+    }
+
+    private IEnumerator RageAttack()
+    {
+        RageAttackBool = true;
+        hasAttacked = true;
+        animator.SetTrigger("RageAttack");
+        yield return new WaitForSeconds(0.1f);
+        agent.transform.rotation *= Quaternion.Euler(0, -45, 0);
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(RageAttackScript.ShootFireballs(player.transform));
+        yield return new WaitForSeconds(1.755f);
+        RageAttackBool = false;
+        agent.transform.LookAt(player);
     }
 
     private IEnumerator walkBetweenAttacks()

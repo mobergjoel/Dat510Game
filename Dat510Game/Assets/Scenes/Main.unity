@@ -64144,6 +64144,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5819764139791089506, guid: 2d813655b782eef45b7188afa2dfdb2e, type: 3}
   m_PrefabInstance: {fileID: 1684617984}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2131189395
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2131189396}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2131189396
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131189395}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.56, z: 0.09}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3490026887076307800}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &2133414831 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 825509911275529788, guid: 81c7dd4128008d84fbd14127f8cdc039, type: 3}
@@ -68628,6 +68659,7 @@ GameObject:
   - component: {fileID: 1647690701}
   - component: {fileID: 1647690704}
   - component: {fileID: 3490026887076307801}
+  - component: {fileID: 3490026887076307803}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -71413,6 +71445,7 @@ Transform:
   - {fileID: 1291257326}
   - {fileID: 893505688}
   - {fileID: 4838629738851732964}
+  - {fileID: 2131189396}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3490026887076307801
@@ -71457,6 +71490,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3490026887076307456}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3490026887076307803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3490026887075954552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdbcac6685ad6b34bab811a6bd6a3692, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireballPrefab: {fileID: 1805445999431277560, guid: 93bb75250edb7684e95f698aa7eca94e, type: 3}
+  firePoint: {fileID: 2131189396}
+  numberOfFireballs: 5
+  fireballSpeed: 15
+  spreadAngle: 15
+  fireRate: 0.3
 --- !u!4 &3490026887076307804
 Transform:
   m_ObjectHideFlags: 0
