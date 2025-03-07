@@ -52,13 +52,13 @@ public class EnemyAi : MonoBehaviour
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
     private float lastStompAttack = 0f;
-    private float StompAttackCoolDown = 7f;
+    private float StompAttackCoolDown = 10f;
 
     private float lastRushAttack = 0f;
     private float rushAttackCoolDown = 12f;
 
     private float lastThrowAttack = 0f;
-    private float throwAttackCoolDown = 3f;
+    private float throwAttackCoolDown = 1f;
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
@@ -90,6 +90,8 @@ public class EnemyAi : MonoBehaviour
     bool RushAttackBool = false;
     bool throwAttackBool = false;
     bool fromWalkToPlayerToBossBattle = true;
+    bool hasAttacked = false;
+    bool inWalkBetweenAttacksMode = false;
 
 
     private void Awake()
@@ -248,45 +250,54 @@ public class EnemyAi : MonoBehaviour
                 lastAttack = Time.time;
                 fromWalkToPlayerToBossBattle = false;
             }
-            if(!RushAttackBool)
+            if(!RushAttackBool && !hasAttacked && !(animator.GetBool("StrafeRight") || animator.GetBool("StrafeLeft")) && !inWalkBetweenAttacksMode)
             {
                 agent.SetDestination(agent.transform.position);
-                transform.LookAt(player);
             }
-            
 
-            if (Time.time - lastStompAttack >= StompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && distanceToPlayer <= distanceForStomp && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool)
+            if (hasAttacked && !inWalkBetweenAttacksMode && !animator.GetBool("StrafeRight") && !animator.GetBool("StrafeLeft"))
             {
-                StartCoroutine(StompShockWave());
-                lastStompAttack = Time.time;
-                lastAttack = Time.time;
+                StartCoroutine(walkBetweenAttacks());
             }
-            else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool)
-            {
-               
-                RushAttackBool = true;
-                RushAttack();
-                lastRushAttack = Time.time;
-                lastAttack = Time.time;
-            }
-            else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool)
-            {
-                projectile.SetActive(true);
-                float random = Random.Range(0, 3);
-                if(random == 0) 
+
+            else
+            { 
+                if (Time.time - lastStompAttack >= StompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && distanceToPlayer <= distanceForStomp && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked)
                 {
-                    Throw1Attack();
+                    StartCoroutine(StompShockWave());
+                    lastStompAttack = Time.time;
+                    lastAttack = Time.time;
+                    
                 }
-                else if(random == 1)
+                else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked)
                 {
-                    Throw2Attack();
+
+                    RushAttackBool = true;
+                    RushAttack();
+                    lastRushAttack = Time.time;
+                    lastAttack = Time.time;
+                    
                 }
-                else
+                else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked)
                 {
-                    Throw3Attack();
+                    projectile.SetActive(true);
+                    float random = Random.Range(0, 3);
+                    if (random == 0)
+                    {
+                        Throw1Attack();
+                    }
+                    else if (random == 1)
+                    {
+                        Throw2Attack();
+                    }
+                    else
+                    {
+                        Throw3Attack();
+                    }
+                    throwAttackBool = true;
+                    
+
                 }
-                throwAttackBool = true;
-                
             }
             
             if(RushAttackBool)
@@ -299,9 +310,18 @@ public class EnemyAi : MonoBehaviour
                     agent.speed = monsterSpeed;
                     agent.acceleration = monsteracceleration;
                     walkPointSet = false;
+                    hasAttacked = true;
                 }
             }
+            else
+            {
+                transform.LookAt(player);
+            }
             
+
+
+
+
 
 
         }
@@ -320,7 +340,57 @@ public class EnemyAi : MonoBehaviour
 
     }
 
-    
+    private IEnumerator walkBetweenAttacks()
+    {
+        int random = Random.Range(0, 2);
+        inWalkBetweenAttacksMode = true;
+        yield return new WaitForSeconds(2);
+
+        // Slå av tidigare animationer för att undvika konflikt
+        animator.SetBool("StrafeRight", false);
+        animator.SetBool("StrafeLeft", false);
+
+        Vector3 targetPosition;
+        if (random == 0)
+        {
+            animator.SetBool("StrafeRight", true);
+            targetPosition = agent.transform.position + agent.transform.right * 7f;
+        }
+        else
+        {
+            animator.SetBool("StrafeLeft", true);
+            targetPosition = agent.transform.position - agent.transform.right * 7f;
+        }
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(targetPosition, out hit, 50f, NavMesh.AllAreas))
+        {
+            walkPoint = hit.position;
+            walkPointSet = true;
+            agent.SetDestination(walkPoint);
+        }
+        else
+        {
+            // Om en giltig position inte hittas, avbryt attackmönstret
+            inWalkBetweenAttacksMode = false;
+            hasAttacked = false;
+            yield break;
+        }
+
+        // Vänta tills vi når destinationen
+        while (Vector3.Distance(agent.transform.position, walkPoint) > 1f)
+        {
+            yield return null;
+        }
+
+        // Återställ status för nästa attack
+        animator.SetBool("StrafeRight", false);
+        animator.SetBool("StrafeLeft", false);
+        inWalkBetweenAttacksMode = false;
+        hasAttacked = false;
+        lastAttack = Time.time-3;
+    }
+
 
     private void Throw1Attack()
     {
@@ -398,6 +468,7 @@ public class EnemyAi : MonoBehaviour
         yield return new WaitForSeconds(shockWaveAnimationTimeOffset);
 
         shockWavePS.Play();
+        hasAttacked = true;
     }
 
     
@@ -414,7 +485,7 @@ public class EnemyAi : MonoBehaviour
         projectileRB.AddForce(projectileRB.transform.forward * 1000);
 
         throwAttackBool = false;
- 
+        hasAttacked = true;
     }
     IEnumerator Throw2Projectile() 
     {
@@ -439,6 +510,7 @@ public class EnemyAi : MonoBehaviour
         projectileRB.AddForce(projectileRB.transform.forward * 1000);
 
         throwAttackBool = false;
+        hasAttacked = true;
     }
     IEnumerator Throw3Projectile()
     {
@@ -472,6 +544,7 @@ public class EnemyAi : MonoBehaviour
         projectileRB.AddForce(projectileRB.transform.forward * 1000);
 
         throwAttackBool = false;
+        hasAttacked = true;
     }
     private void RushAttack()
     {
