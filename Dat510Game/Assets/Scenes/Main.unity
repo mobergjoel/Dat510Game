@@ -50324,6 +50324,7 @@ MonoBehaviour:
   monsterSound9: {fileID: 238565731}
   monsterSound10: {fileID: 624856690}
   monsterSound11: {fileID: 496255385}
+  ChasePlayerBool: 0
   screamCooldown: 10
   MonsterJumpscare: {fileID: 642614670}
   groundAttack: {fileID: 782941486}
@@ -51294,6 +51295,7 @@ MonoBehaviour:
   fpsCam: {fileID: 1140813981}
   gunShoot: {fileID: 2004059902}
   monster: {fileID: 1647690700}
+  animator: {fileID: 3490026887066422456}
   nextTimeToFire: 0
   muzzleFlash: {fileID: 1151425453}
 --- !u!1001 &1672348193

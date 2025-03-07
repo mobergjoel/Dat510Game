@@ -45,7 +45,7 @@ public class EnemyAi : MonoBehaviour
     public AudioSource monsterSound10;
     public AudioSource monsterSound11;
 
-    private bool ChasePlayerBool = false;
+    public bool ChasePlayerBool = false;
     
 
     public float screamCooldown = 20f; // Time in seconds between screams
@@ -81,10 +81,10 @@ public class EnemyAi : MonoBehaviour
     float countdownTimer;
     float monsterSpeed;
     float monsteracceleration;
-    float lastThrowAttackCoolDown = 3.5f;
-    float lastStompAttackCoolDown = 4f;
+    float lastThrowAttackCoolDown = 2f;
+    float lastStompAttackCoolDown = 2f;
     float lastAttack = 0f;
-    float lastRushAttackCoolDown = 5f;
+    float lastRushAttackCoolDown = 2f;
     bool searchingFarAway = true;
     public bool canAttack = true;
     bool RushAttackBool = false;
@@ -114,91 +114,99 @@ public class EnemyAi : MonoBehaviour
         {
             // Disable NavMeshAgent and stop all actions
             agent.enabled = false;
+            animator.SetBool("StrafeLeft", false);
+            animator.SetBool("StrafeRight", false);
+            animator.SetBool("RushAttack", false);
             animator.SetBool("IsDead", true);
         }
-        distanceToPlayer = Vector3.Distance(player.position, transform.position);
+        else
+        {
 
-        if (animator.GetBool("BossBattle"))
-        {
-            sightRange = walkSightRange;
-        }
-        else if (flashLightScript.getFlashLightOn()) 
-        {
-            sightRange = flashLightRange;
-        }
-        else if(playerScript.isWalking)
-        {
-            if(playerScript.isCrouched)
+
+            distanceToPlayer = Vector3.Distance(player.position, transform.position);
+
+            if (animator.GetBool("BossBattle"))
             {
-                sightRange = crouchSightRange;
+                sightRange = 20;
+            }
+            else if (flashLightScript.getFlashLightOn())
+            {
+                sightRange = flashLightRange;
+            }
+            else if (playerScript.isWalking)
+            {
+                if (playerScript.isCrouched)
+                {
+                    sightRange = crouchSightRange;
+                }
+                else
+                {
+                    sightRange = walkSightRange;
+                }
+            }
+            else if (playerScript.isSprinting)
+            {
+                sightRange = sprintSightRange;
+            }
+            else if (playerScript.isCrouched && !playerScript.isWalking)
+            {
+                sightRange = stationaryCrouchSightRange;
             }
             else
             {
-                sightRange = walkSightRange;
-            }  
-        }
-        else if(playerScript.isSprinting) 
-        {
-            sightRange = sprintSightRange;
-        }
-        else if (playerScript.isCrouched && !playerScript.isWalking)
-        {
-            sightRange = stationaryCrouchSightRange;
-        }
-        else
-        {
-            sightRange = stationarySightRange;
-        }
-        //Check for sight and attack range
-        playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
-        playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
+                sightRange = stationarySightRange;
+            }
+            //Check for sight and attack range
+            playerInSightRange = Physics.CheckSphere(transform.position, sightRange, whatIsPlayer);
+            playerInAttackRange = Physics.CheckSphere(transform.position, attackRange, whatIsPlayer);
 
-        if (!agent.isOnNavMesh)
-        {
-            Debug.Log("Monster �r inte p� NavMesh!");
-        }
-
-        else if (!playerInSightRange && !playerInAttackRange)
-        {
-            if (ChasePlayerBool)
+            if (!agent.isOnNavMesh)
             {
-                walkToPlayer();
-                if (animator.GetBool("BossBattle"))
+                Debug.Log("Monster �r inte p� NavMesh!");
+            }
+
+            else if (!playerInSightRange && !playerInAttackRange)
+            {
+                if (ChasePlayerBool)
                 {
-                    fromWalkToPlayerToBossBattle = true;
-                    RushAttackBool = false;
+                    walkToPlayer();
+                    if (animator.GetBool("BossBattle"))
+                    {
+                        fromWalkToPlayerToBossBattle = true;
+                        RushAttackBool = false;
+                    }
+
                 }
-                
+                else
+                {
+                    Patroling();
+                }
             }
-            else 
+
+            if (playerInSightRange && (!playerInAttackRange || !canAttack)) ChasePlayer();
+            if (playerInSightRange && playerInAttackRange && canAttack) AttackPlayer();
+
+
+
+            if (distanceToPlayer > 100 && searchingFarAway)
             {
-                Patroling();
+                monsterSpeed = agent.speed;
+                agent.speed = agent.speed * 2;
+                agent.acceleration = agent.speed * 1000;
+                searchingFarAway = false;
+
             }
-        }
-           
-        if (playerInSightRange && (!playerInAttackRange || !canAttack)) ChasePlayer();
-        if (playerInSightRange && playerInAttackRange && canAttack) AttackPlayer();
-        
+            else if (RushAttackBool)
+            {
 
-
-        if(distanceToPlayer > 100 && searchingFarAway)
-        {
-            monsterSpeed = agent.speed;
-            agent.speed = agent.speed * 2;
-            agent.acceleration = agent.speed * 1000;
-            searchingFarAway = false;
-           
-        }
-        else if (RushAttackBool)
-        {
-            
-            searchingFarAway = true;
-        }
-        else
-        {
-            agent.speed = monsterSpeed;
-            agent.acceleration = monsteracceleration;
-            searchingFarAway = true;
+                searchingFarAway = true;
+            }
+            else
+            {
+                agent.speed = monsterSpeed;
+                agent.acceleration = monsteracceleration;
+                searchingFarAway = true;
+            }
         }
 
         
@@ -206,7 +214,7 @@ public class EnemyAi : MonoBehaviour
 
     private void Patroling()
     {
-           
+        
         if (Time.time - lastScreamTime >= screamCooldown)
         {
             monsterSound4.Play();
@@ -220,7 +228,7 @@ public class EnemyAi : MonoBehaviour
         Vector3 distanceToWalkPoint = transform.position - walkPoint;
 
         //Walkpoint reached
-        if (distanceToWalkPoint.magnitude < 2f) walkPointSet = false;
+        if (distanceToWalkPoint.magnitude < 4f) walkPointSet = false;
     }
 
     private void SearchWalkPoint()
@@ -367,7 +375,10 @@ public class EnemyAi : MonoBehaviour
         {
             walkPoint = hit.position;
             walkPointSet = true;
-            agent.SetDestination(walkPoint);
+            if (!enemy.isDead)
+            {
+                agent.SetDestination(walkPoint);
+            }
         }
         else
         {
@@ -388,7 +399,7 @@ public class EnemyAi : MonoBehaviour
         animator.SetBool("StrafeLeft", false);
         inWalkBetweenAttacksMode = false;
         hasAttacked = false;
-        lastAttack = Time.time-3;
+        lastAttack = Time.time-4;
     }
 
 

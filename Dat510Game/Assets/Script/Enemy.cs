@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator HandleDeath()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(6f);
         gameObject.SetActive(false);
         healthBar.gameObject.SetActive(false);
         Invoke("loadGameOver", 1f);

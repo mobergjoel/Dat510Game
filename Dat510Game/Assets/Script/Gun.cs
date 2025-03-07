@@ -11,6 +11,8 @@ public class Gun : MonoBehaviour
     public Camera fpsCam;
     public AudioSource gunShoot;
     public EnemyAi monster;
+    public Animator animator;
+    Transform player;
 
     public float nextTimeToFire = 0f;
     
@@ -20,7 +22,7 @@ public class Gun : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.Find("PlayerObj").transform;
     }
 
     // Update is called once per frame
@@ -37,6 +39,7 @@ public class Gun : MonoBehaviour
 
     void Shoot()
     {
+        float distanceToPlayer = Vector3.Distance(player.position, monster.transform.position);
         muzzleFlash.Play();
         gunShoot.Play();
 
@@ -52,8 +55,11 @@ public class Gun : MonoBehaviour
                 enemy.TakeDamage(damage);
             }
         }
+        if (animator.GetBool("BossBattle") && distanceToPlayer > 50)
+        {
+            monster.walkToPlayer();
+        }
 
-        monster.walkToPlayer();
     }
 
 }
