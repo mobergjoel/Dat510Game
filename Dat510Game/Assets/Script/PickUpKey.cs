@@ -11,6 +11,7 @@ public class PickUpKey : MonoBehaviour
     public AudioSource keySound;
     public OpenBoxScript chest;
     public NavMeshAgent monster;
+    public EnemyAi enemy;
 
     public bool inReach;
 
@@ -54,6 +55,7 @@ public class PickUpKey : MonoBehaviour
             pickUpText.SetActive(false);
             chest.howManyKeys++;
             monster.speed = (float)(monster.speed * 1.2);
+            enemy.monsterSpeed = (float)(enemy.monsterSpeed * 1.2);
         }
         
     }

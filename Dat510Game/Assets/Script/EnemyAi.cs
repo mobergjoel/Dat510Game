@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -79,7 +80,7 @@ public class EnemyAi : MonoBehaviour
     float distanceToPlayer;
     public float distanceForStomp = 10;
     float countdownTimer;
-    float monsterSpeed;
+    public float monsterSpeed;
     float monsteracceleration;
     float lastThrowAttackCoolDown = 2f;
     float lastStompAttackCoolDown = 2f;
@@ -97,7 +98,6 @@ public class EnemyAi : MonoBehaviour
     private void Awake()
     {
         player = GameObject.Find("PlayerObj").transform;
-        agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         enemy = GetComponent<Enemy>();
         projectile = transform.Find("Projectile").gameObject;
