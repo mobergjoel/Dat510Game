@@ -30,4 +30,9 @@ public class DeathMenu : MonoBehaviour
     {
         SceneManager.LoadScene("Controls");
     }
+
+    public void Tips()
+    {
+        SceneManager.LoadScene("Tips");
+    }
 }

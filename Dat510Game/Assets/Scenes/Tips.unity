@@ -433,7 +433,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 289}
+  m_AnchoredPosition: {x: 6, y: 273}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1027089265
@@ -469,16 +469,18 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 2
-  m_Text: 'Use WASD to move
+  m_Text: 'The monster is sensitive to light and sound.
 
-    Press Space to jump
+    If you have your flashlight
+    on, the monster will see you from farther away.
 
-    Hold Shift to run
+    If you run the monster will
+    hear you More.
 
-    Press
-    F to turn on/off flashlight
+    If you sneak the monster will hear you less.
 
-    Press M to open/close the map'
+    The monster
+    becomes more dangerous the more keys you collect.'
 --- !u!222 &1027089266
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -595,7 +597,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 415}
+  m_AnchoredPosition: {x: 6, y: 417}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1385210264
@@ -631,7 +633,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1.5
-  m_Text: Controls
+  m_Text: Tips
 --- !u!222 &1385210265
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -895,7 +897,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000030517578, y: -340}
+  m_AnchoredPosition: {x: 0.000030517578, y: -349}
   m_SizeDelta: {x: 300, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1997721128
