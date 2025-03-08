@@ -275,6 +275,7 @@ public class EnemyAi : MonoBehaviour
             { 
                 if (Time.time - lastStompAttack >= StompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && distanceToPlayer <= distanceForStomp && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked)
                 {
+                    monsterSound2.Play();
                     StartCoroutine(StompShockWave());
                     lastStompAttack = Time.time;
                     lastAttack = Time.time;
@@ -282,6 +283,7 @@ public class EnemyAi : MonoBehaviour
                 }
                 else if (Time.time - lastRageAttack >= rageAttackCoolDown && Time.time - lastAttack >= lastRushAttackCoolDown && !throwAttackBool && !hasAttacked && distanceToPlayer <= 27)
                 {
+                    monsterSound3.Play();
                     StartCoroutine(RageAttack());
                     lastAttack = Time.time + 1.5f;
                     lastRageAttack = Time.time + 1.5f;
@@ -290,7 +292,7 @@ public class EnemyAi : MonoBehaviour
 
                 else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked && !RushAttackBool)
                 {
-
+                    monsterSound4.Play();
                     RushAttackBool = true;
                     RushAttack();
                     lastRushAttack = Time.time;
@@ -304,14 +306,17 @@ public class EnemyAi : MonoBehaviour
                     float random = Random.Range(0, 3);
                     if (random == 0)
                     {
+                        monsterSound1.Play();
                         Throw1Attack();
                     }
                     else if (random == 1)
                     {
+                        monsterSound2.Play();
                         Throw2Attack();
                     }
                     else
                     {
+                        monsterSound3.Play();
                         Throw3Attack();
                     }
                     throwAttackBool = true;
@@ -382,6 +387,7 @@ public class EnemyAi : MonoBehaviour
 
     private IEnumerator walkBetweenAttacks()
     {
+        monsterSound3.Play();
         int random = Random.Range(0, 2);
         inWalkBetweenAttacksMode = true;
         yield return new WaitForSeconds(2);
