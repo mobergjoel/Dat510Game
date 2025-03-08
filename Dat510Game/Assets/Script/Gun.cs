@@ -12,6 +12,7 @@ public class Gun : MonoBehaviour
     public AudioSource gunShoot;
     public EnemyAi monster;
     public Animator animator;
+    public GameObject impactEffect;
     Transform player;
 
     public float nextTimeToFire = 0f;
@@ -52,6 +53,8 @@ public class Gun : MonoBehaviour
             Enemy enemy = hit.transform.GetComponent<Enemy>();
             if (enemy != null)
             {
+                GameObject impactGO = Instantiate(impactEffect, hit.point, Quaternion.LookRotation(hit.normal));
+                Destroy(impactGO, 1f);
                 enemy.TakeDamage(damage);
             }
         }

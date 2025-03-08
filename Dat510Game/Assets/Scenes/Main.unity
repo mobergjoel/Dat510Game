@@ -52829,6 +52829,7 @@ MonoBehaviour:
   gunShoot: {fileID: 2004059902}
   monster: {fileID: 1647690700}
   animator: {fileID: 3490026887066422456}
+  impactEffect: {fileID: 1482529505470255269, guid: 0db13fb51bc5c9b469bbc36794dc4683, type: 3}
   nextTimeToFire: 0
   muzzleFlash: {fileID: 1151425453}
 --- !u!1001 &1672348193
