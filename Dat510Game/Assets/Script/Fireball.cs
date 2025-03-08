@@ -13,35 +13,19 @@ public class Fireball : MonoBehaviour
     {
         if (treeLayer == (treeLayer | (1 << collision.gameObject.layer)))
         {
-            print("tree hit");
             IgniteTree(collision.gameObject);
         }
     }
 
     private void IgniteTree(GameObject tree)
     {
-        if (fireEffectPrefab != null)
+        Collider treeCollider = tree.GetComponent<Collider>();
+        Bounds bounds = treeCollider.bounds; 
+        for (int i = 0; i < numberOfEffects; i++)
         {
-            Collider treeCollider = tree.GetComponent<Collider>();
-
-            if (treeCollider != null)
-            {
-                Bounds bounds = treeCollider.bounds; 
-                for (int i = 0; i < numberOfEffects; i++)
-                {
-                    Vector3 spawnPoint = GetRandomPointOnBounds(bounds);
-
-                    GameObject fireEffect = Instantiate(fireEffectPrefab, spawnPoint, Quaternion.identity);
-                    fireEffect.transform.parent = tree.transform;
-                }
-                
-            }
-            else
-            {
-                // Fallback if no collider
-                GameObject fireEffect = Instantiate(fireEffectPrefab, tree.transform.position, Quaternion.identity);
-                fireEffect.transform.parent = tree.transform;
-            }
+            Vector3 spawnPoint = GetRandomPointOnBounds(bounds);
+            GameObject fireEffect = Instantiate(fireEffectPrefab, spawnPoint, Quaternion.identity);
+            fireEffect.transform.parent = tree.transform;
         }
         Destroy(tree, 10f);
     }
@@ -49,11 +33,11 @@ public class Fireball : MonoBehaviour
     // Function to get a random point on the collider's bounds
     private Vector3 GetRandomPointOnBounds(Bounds bounds)
     {
-    float randomX = Random.Range(bounds.min.x, bounds.max.x);
-    float randomY = Random.Range(bounds.min.y, bounds.max.y);
-    float randomZ = Random.Range(bounds.min.z, bounds.max.z);
+        float randomX = Random.Range(bounds.min.x, bounds.max.x);
+        float randomY = Random.Range(bounds.min.y, bounds.max.y);
+        float randomZ = Random.Range(bounds.min.z, bounds.max.z);
 
-    return new Vector3(randomX, randomY, randomZ);
+        return new Vector3(randomX, randomY, randomZ);
     }
     
  
