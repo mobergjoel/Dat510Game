@@ -66,6 +66,8 @@ public class EnemyAi : MonoBehaviour
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
+    public Transform fireAttackPoint;
+    public GameObject fireballPrefab;
 
     public float distanceForProjectileThrow = 10;
     public float timeBetweenProjectileThrows = 5;
@@ -98,6 +100,7 @@ public class EnemyAi : MonoBehaviour
     bool inWalkBetweenAttacksMode = false;
     MonsterShooter RageAttackScript;
     bool RageAttackBool = false;
+    bool hasJustDoneRushAttack = false;
 
 
     private void Awake()
@@ -270,6 +273,10 @@ public class EnemyAi : MonoBehaviour
             {
                 StartCoroutine(walkBetweenAttacks());
             }
+            else if (inWalkBetweenAttacksMode)
+            {
+
+            }
 
             else
             { 
@@ -281,7 +288,7 @@ public class EnemyAi : MonoBehaviour
                     lastAttack = Time.time;
                     
                 }
-                else if (Time.time - lastRageAttack >= rageAttackCoolDown && Time.time - lastAttack >= lastRushAttackCoolDown && !throwAttackBool && !hasAttacked && distanceToPlayer <= 27)
+                else if (Time.time - lastRageAttack >= rageAttackCoolDown && Time.time - lastAttack >= lastRushAttackCoolDown && !throwAttackBool && !hasAttacked && distanceToPlayer <= 27 && !RushAttackBool)
                 {
                     monsterSound3.Play();
                     StartCoroutine(RageAttack());
@@ -296,14 +303,12 @@ public class EnemyAi : MonoBehaviour
                     RushAttackBool = true;
                     RushAttack();
                     lastRushAttack = Time.time;
-                    lastAttack = Time.time;
                     
                 }
                 
                 else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked && distanceToPlayer <= 35)
                 {
-                    projectile.SetActive(true);
-                    float random = Random.Range(0, 3);
+                    float random = Random.Range(0, 4);
                     if (random == 0)
                     {
                         monsterSound1.Play();
@@ -328,7 +333,6 @@ public class EnemyAi : MonoBehaviour
             if(RushAttackBool)
             {
                 Vector3 distanceToWalkPoint = transform.position - walkPoint;
-                Debug.Log(distanceToWalkPoint.magnitude);
                 if (distanceToWalkPoint.magnitude < 2f)
                 {
                     animator.SetBool("RushAttack", false);
@@ -337,7 +341,8 @@ public class EnemyAi : MonoBehaviour
                     agent.acceleration = monsteracceleration;
                     walkPointSet = false;
                     hasAttacked = true;
-                    lastAttack = Time.time-1.5f;
+                    lastAttack = Time.time-2f;
+                    hasJustDoneRushAttack = true;
                 }
             }
             else if (RageAttackBool)
@@ -390,7 +395,16 @@ public class EnemyAi : MonoBehaviour
         monsterSound3.Play();
         int random = Random.Range(0, 2);
         inWalkBetweenAttacksMode = true;
-        yield return new WaitForSeconds(2);
+        if (hasJustDoneRushAttack)
+        {
+            hasJustDoneRushAttack = false;
+            yield return new WaitForSeconds(0.5f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(2);
+        }
+        
 
         // Slå av tidigare animationer för att undvika konflikt
         animator.SetBool("StrafeRight", false);
@@ -443,18 +457,15 @@ public class EnemyAi : MonoBehaviour
 
     private void Throw1Attack()
     {
-        ResetProjectile();
         StartCoroutine(Throw1Projectile());
     }
 
     private void Throw2Attack()
     {
-        ResetProjectile();
         StartCoroutine(Throw2Projectile());
     }
     private void Throw3Attack()
     {
-        ResetProjectile();
         StartCoroutine(Throw3Projectile());
     }
 
@@ -522,41 +533,208 @@ public class EnemyAi : MonoBehaviour
 
     
 
-    IEnumerator Throw1Projectile() 
+    
+    IEnumerator Throw1Projectile()
     {
         lastThrowAttack = Time.time;
         lastAttack = Time.time;
         animator.SetTrigger("Throw");
+
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        projectileRB.isKinematic = false;
-        projectile.transform.parent = null;
-        projectile.transform.LookAt(player);
-        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        // Skapa tre projektiler
+        GameObject centerProjectile = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
+        GameObject leftProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
+        GameObject rightProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
+
+
+        Rigidbody rbCenter = centerProjectile.GetComponent<Rigidbody>();
+        Rigidbody rbLeft = leftProjectile.GetComponent<Rigidbody>();
+        Rigidbody rbRight = rightProjectile.GetComponent<Rigidbody>();
+
+        Collider colCenter = centerProjectile.GetComponent<Collider>();
+        Collider colLeft = leftProjectile.GetComponent<Collider>();
+        Collider colRight = rightProjectile.GetComponent<Collider>();
+
+        // Se till att projektilerna inte kolliderar med varandra
+        Physics.IgnoreCollision(colCenter, colLeft);
+        Physics.IgnoreCollision(colCenter, colRight);
+        Physics.IgnoreCollision(colLeft, colRight);
+
+        rbCenter.interpolation = RigidbodyInterpolation.None;
+        rbLeft.interpolation = RigidbodyInterpolation.None;
+        rbRight.interpolation = RigidbodyInterpolation.None;
+
+        rbCenter.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbLeft.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbRight.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // Gör dem fysiska och ta bort deras parent
+        rbCenter.isKinematic = false;
+        rbLeft.isKinematic = false;
+        rbRight.isKinematic = false;
+
+        centerProjectile.transform.parent = null;
+        leftProjectile.transform.parent = null;
+        rightProjectile.transform.parent = null;
+
+        // Rikta centerprojektilen rakt mot spelaren
+        centerProjectile.transform.LookAt(player);
+
+        // Beräkna rotationsvinklar för sidoprojektiler
+        Quaternion leftRotation = Quaternion.Euler(0, -10, 0) * centerProjectile.transform.rotation;
+        Quaternion centerRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
+        Quaternion rightRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
+
+        // Rotera sidoprojektilerna
+        leftProjectile.transform.rotation = leftRotation;
+        centerProjectile.transform.rotation = centerRotation;
+        rightProjectile.transform.rotation = rightRotation;
+
+        // Skjut projektilerna framåt
+        rbCenter.AddForce(agent.transform.forward * 1000);
+        rbLeft.AddForce(agent.transform.forward * 1000);
+        rbRight.AddForce(agent.transform.forward * 1000);
 
         throwAttackBool = false;
         hasAttacked = true;
+        Destroy(centerProjectile, 4f);
+        Destroy(leftProjectile, 4f);
+        Destroy(rightProjectile, 4f);
     }
+
     IEnumerator Throw2Projectile() 
     {
         animator.SetTrigger("Throw");
-        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        projectileRB.isKinematic = false;
-        projectile.transform.parent = null;
-        projectile.transform.LookAt(player);
-        projectileRB.AddForce(projectileRB.transform.forward * 1000);
 
-        yield return new WaitForSeconds(2);
-        ResetProjectile();
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+
+        // Skapa tre projektiler
+        GameObject centerProjectile = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
+        GameObject leftProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
+        GameObject rightProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
+
+
+        Rigidbody rbCenter = centerProjectile.GetComponent<Rigidbody>();
+        Rigidbody rbLeft = leftProjectile.GetComponent<Rigidbody>();
+        Rigidbody rbRight = rightProjectile.GetComponent<Rigidbody>();
+
+        Collider colCenter = centerProjectile.GetComponent<Collider>();
+        Collider colLeft = leftProjectile.GetComponent<Collider>();
+        Collider colRight = rightProjectile.GetComponent<Collider>();
+
+        // Se till att projektilerna inte kolliderar med varandra
+        Physics.IgnoreCollision(colCenter, colLeft);
+        Physics.IgnoreCollision(colCenter, colRight);
+        Physics.IgnoreCollision(colLeft, colRight);
+
+        rbCenter.interpolation = RigidbodyInterpolation.None;
+        rbLeft.interpolation = RigidbodyInterpolation.None;
+        rbRight.interpolation = RigidbodyInterpolation.None;
+
+        rbCenter.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbLeft.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbRight.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // Gör dem fysiska och ta bort deras parent
+        rbCenter.isKinematic = false;
+        rbLeft.isKinematic = false;
+        rbRight.isKinematic = false;
+
+        centerProjectile.transform.parent = null;
+        leftProjectile.transform.parent = null;
+        rightProjectile.transform.parent = null;
+
+        // Rikta centerprojektilen rakt mot spelaren
+        centerProjectile.transform.LookAt(player);
+
+        // Beräkna rotationsvinklar för sidoprojektiler
+        Quaternion leftRotation = Quaternion.Euler(0, -10, 0) * centerProjectile.transform.rotation;
+        Quaternion centerRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
+        Quaternion rightRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
+
+        // Rotera sidoprojektilerna
+        leftProjectile.transform.rotation = leftRotation;
+        centerProjectile.transform.rotation = centerRotation;
+        rightProjectile.transform.rotation = rightRotation;
+
+        // Skjut projektilerna framåt
+        rbCenter.AddForce(agent.transform.forward * 1000);
+        rbLeft.AddForce(agent.transform.forward * 1000);
+        rbRight.AddForce(agent.transform.forward * 1000);
+
+        
+        Destroy(centerProjectile, 4f);
+        Destroy(leftProjectile, 4f);
+        Destroy(rightProjectile, 4f);
+
+        yield return new WaitForSeconds(1.85f);
 
         lastThrowAttack = Time.time;
         lastAttack = Time.time;
 
         animator.SetTrigger("Throw");
+
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        projectileRB.isKinematic = false;
-        projectile.transform.parent = null;
-        projectile.transform.LookAt(player);
-        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+
+        // Skapa tre projektiler
+        GameObject centerProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
+        GameObject leftProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
+        GameObject rightProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
+
+
+        Rigidbody rbCenter2 = centerProjectile2.GetComponent<Rigidbody>();
+        Rigidbody rbLeft2 = leftProjectile2.GetComponent<Rigidbody>();
+        Rigidbody rbRight2 = rightProjectile2.GetComponent<Rigidbody>();
+
+        Collider colCenter2 = centerProjectile2.GetComponent<Collider>();
+        Collider colLeft2 = leftProjectile2.GetComponent<Collider>();
+        Collider colRight2 = rightProjectile2.GetComponent<Collider>();
+
+        // Se till att projektilerna inte kolliderar med varandra
+        Physics.IgnoreCollision(colCenter2, colLeft2);
+        Physics.IgnoreCollision(colCenter2, colRight2);
+        Physics.IgnoreCollision(colLeft2, colRight2);
+
+        rbCenter2.interpolation = RigidbodyInterpolation.None;
+        rbLeft2.interpolation = RigidbodyInterpolation.None;
+        rbRight2.interpolation = RigidbodyInterpolation.None;
+
+        rbCenter2.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbLeft2.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbRight2.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // Gör dem fysiska och ta bort deras parent
+        rbCenter2.isKinematic = false;
+        rbLeft2.isKinematic = false;
+        rbRight2.isKinematic = false;
+
+        centerProjectile2.transform.parent = null;
+        leftProjectile2.transform.parent = null;
+        rightProjectile2.transform.parent = null;
+
+        // Rikta centerprojektilen rakt mot spelaren
+        centerProjectile2.transform.LookAt(player);
+
+        // Beräkna rotationsvinklar för sidoprojektiler
+        Quaternion leftRotation2 = Quaternion.Euler(0, -10, 0) * centerProjectile2.transform.rotation;
+        Quaternion centerRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
+        Quaternion rightRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
+
+        // Rotera sidoprojektilerna
+        leftProjectile2.transform.rotation = leftRotation2;
+        centerProjectile2.transform.rotation = centerRotation2;
+        rightProjectile2.transform.rotation = rightRotation2;
+
+        // Skjut projektilerna framåt
+        rbCenter2.AddForce(agent.transform.forward * 1000);
+        rbLeft2.AddForce(agent.transform.forward * 1000);
+        rbRight2.AddForce(agent.transform.forward * 1000);
+
+        
+        Destroy(centerProjectile2, 4f);
+        Destroy(leftProjectile2, 4f);
+        Destroy(rightProjectile2, 4f);
 
         throwAttackBool = false;
         hasAttacked = true;
@@ -564,33 +742,199 @@ public class EnemyAi : MonoBehaviour
     IEnumerator Throw3Projectile()
     {
         animator.SetTrigger("Throw");
-        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        projectileRB.isKinematic = false;
-        projectile.transform.parent = null;
-        projectile.transform.LookAt(player);
-        projectileRB.AddForce(projectileRB.transform.forward * 1000);
 
-        yield return new WaitForSeconds(2);
-        ResetProjectile();
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+
+        // Skapa tre projektiler
+        GameObject centerProjectile = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
+        GameObject leftProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
+        GameObject rightProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
+
+
+        Rigidbody rbCenter = centerProjectile.GetComponent<Rigidbody>();
+        Rigidbody rbLeft = leftProjectile.GetComponent<Rigidbody>();
+        Rigidbody rbRight = rightProjectile.GetComponent<Rigidbody>();
+
+        Collider colCenter = centerProjectile.GetComponent<Collider>();
+        Collider colLeft = leftProjectile.GetComponent<Collider>();
+        Collider colRight = rightProjectile.GetComponent<Collider>();
+
+        // Se till att projektilerna inte kolliderar med varandra
+        Physics.IgnoreCollision(colCenter, colLeft);
+        Physics.IgnoreCollision(colCenter, colRight);
+        Physics.IgnoreCollision(colLeft, colRight);
+
+        rbCenter.interpolation = RigidbodyInterpolation.None;
+        rbLeft.interpolation = RigidbodyInterpolation.None;
+        rbRight.interpolation = RigidbodyInterpolation.None;
+
+        rbCenter.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbLeft.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbRight.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // Gör dem fysiska och ta bort deras parent
+        rbCenter.isKinematic = false;
+        rbLeft.isKinematic = false;
+        rbRight.isKinematic = false;
+
+        centerProjectile.transform.parent = null;
+        leftProjectile.transform.parent = null;
+        rightProjectile.transform.parent = null;
+
+        // Rikta centerprojektilen rakt mot spelaren
+        centerProjectile.transform.LookAt(player);
+
+        // Beräkna rotationsvinklar för sidoprojektiler
+        Quaternion leftRotation = Quaternion.Euler(0, -10, 0) * centerProjectile.transform.rotation;
+        Quaternion centerRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
+        Quaternion rightRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
+
+        // Rotera sidoprojektilerna
+        leftProjectile.transform.rotation = leftRotation;
+        centerProjectile.transform.rotation = centerRotation;
+        rightProjectile.transform.rotation = rightRotation;
+
+        // Skjut projektilerna framåt
+        rbCenter.AddForce(agent.transform.forward * 1000);
+        rbLeft.AddForce(agent.transform.forward * 1000);
+        rbRight.AddForce(agent.transform.forward * 1000);
+
+
+        Destroy(centerProjectile, 4f);
+        Destroy(leftProjectile, 4f);
+        Destroy(rightProjectile, 4f);
+
+        yield return new WaitForSeconds(1.85f);
+
 
         animator.SetTrigger("Throw");
-        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        projectileRB.isKinematic = false;
-        projectile.transform.parent = null;
-        projectile.transform.LookAt(player);
-        projectileRB.AddForce(projectileRB.transform.forward * 1000);
 
-        yield return new WaitForSeconds(2);
-        ResetProjectile();
+        yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
+
+        // Skapa tre projektiler
+        GameObject centerProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
+        GameObject leftProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
+        GameObject rightProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
+
+
+        Rigidbody rbCenter2 = centerProjectile2.GetComponent<Rigidbody>();
+        Rigidbody rbLeft2 = leftProjectile2.GetComponent<Rigidbody>();
+        Rigidbody rbRight2 = rightProjectile2.GetComponent<Rigidbody>();
+
+        Collider colCenter2 = centerProjectile2.GetComponent<Collider>();
+        Collider colLeft2 = leftProjectile2.GetComponent<Collider>();
+        Collider colRight2 = rightProjectile2.GetComponent<Collider>();
+
+        // Se till att projektilerna inte kolliderar med varandra
+        Physics.IgnoreCollision(colCenter2, colLeft2);
+        Physics.IgnoreCollision(colCenter2, colRight2);
+        Physics.IgnoreCollision(colLeft2, colRight2);
+
+        rbCenter2.interpolation = RigidbodyInterpolation.None;
+        rbLeft2.interpolation = RigidbodyInterpolation.None;
+        rbRight2.interpolation = RigidbodyInterpolation.None;
+
+        rbCenter2.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbLeft2.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbRight2.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // Gör dem fysiska och ta bort deras parent
+        rbCenter2.isKinematic = false;
+        rbLeft2.isKinematic = false;
+        rbRight2.isKinematic = false;
+
+        centerProjectile2.transform.parent = null;
+        leftProjectile2.transform.parent = null;
+        rightProjectile2.transform.parent = null;
+
+        // Rikta centerprojektilen rakt mot spelaren
+        centerProjectile2.transform.LookAt(player);
+
+        // Beräkna rotationsvinklar för sidoprojektiler
+        Quaternion leftRotation2 = Quaternion.Euler(0, -10, 0) * centerProjectile2.transform.rotation;
+        Quaternion centerRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
+        Quaternion rightRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
+
+        // Rotera sidoprojektilerna
+        leftProjectile2.transform.rotation = leftRotation2;
+        centerProjectile2.transform.rotation = centerRotation2;
+        rightProjectile2.transform.rotation = rightRotation2;
+
+        // Skjut projektilerna framåt
+        rbCenter2.AddForce(agent.transform.forward * 1000);
+        rbLeft2.AddForce(agent.transform.forward * 1000);
+        rbRight2.AddForce(agent.transform.forward * 1000);
+
+
+        Destroy(centerProjectile2, 4f);
+        Destroy(leftProjectile2, 4f);
+        Destroy(rightProjectile2, 4f);
+
+        yield return new WaitForSeconds(1.85f);
 
         lastThrowAttack = Time.time;
         lastAttack = Time.time;
+
         animator.SetTrigger("Throw");
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        projectileRB.isKinematic = false;
-        projectile.transform.parent = null;
-        projectile.transform.LookAt(player);
-        projectileRB.AddForce(projectileRB.transform.forward * 1000);
+        // Skapa tre projektiler
+        GameObject centerProjectile3 = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
+        GameObject leftProjectile3 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
+        GameObject rightProjectile3 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
+
+
+        Rigidbody rbCenter3 = centerProjectile3.GetComponent<Rigidbody>();
+        Rigidbody rbLeft3 = leftProjectile3.GetComponent<Rigidbody>();
+        Rigidbody rbRight3 = rightProjectile3.GetComponent<Rigidbody>();
+
+        Collider colCenter3 = centerProjectile3.GetComponent<Collider>();
+        Collider colLeft3 = leftProjectile3.GetComponent<Collider>();
+        Collider colRight3 = rightProjectile3.GetComponent<Collider>();
+
+        // Se till att projektilerna inte kolliderar med varandra
+        Physics.IgnoreCollision(colCenter3, colLeft3);
+        Physics.IgnoreCollision(colCenter3, colRight3);
+        Physics.IgnoreCollision(colLeft3, colRight3);
+
+        rbCenter3.interpolation = RigidbodyInterpolation.None;
+        rbLeft3.interpolation = RigidbodyInterpolation.None;
+        rbRight3.interpolation = RigidbodyInterpolation.None;
+
+        rbCenter3.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbLeft3.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        rbRight3.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+        // Gör dem fysiska och ta bort deras parent
+        rbCenter3.isKinematic = false;
+        rbLeft3.isKinematic = false;
+        rbRight3.isKinematic = false;
+
+        centerProjectile3.transform.parent = null;
+        leftProjectile3.transform.parent = null;
+        rightProjectile3.transform.parent = null;
+
+        // Rikta centerprojektilen rakt mot spelaren
+        centerProjectile3.transform.LookAt(player);
+
+        // Beräkna rotationsvinklar för sidoprojektiler
+        Quaternion leftRotation3 = Quaternion.Euler(0, -10, 0) * centerProjectile3.transform.rotation;
+        Quaternion centerRotation3 = Quaternion.Euler(0, 0, 0) * centerProjectile3.transform.rotation;
+        Quaternion rightRotation3 = Quaternion.Euler(0, 0, 0) * centerProjectile3.transform.rotation;
+
+        // Rotera sidoprojektilerna
+        leftProjectile3.transform.rotation = leftRotation3;
+        centerProjectile3.transform.rotation = centerRotation3;
+        rightProjectile3.transform.rotation = rightRotation3;
+
+        // Skjut projektilerna framåt
+        rbCenter3.AddForce(agent.transform.forward * 1000);
+        rbLeft3.AddForce(agent.transform.forward * 1000);
+        rbRight3.AddForce(agent.transform.forward * 1000);
+
+
+        Destroy(centerProjectile3, 4f);
+        Destroy(leftProjectile3, 4f);
+        Destroy(rightProjectile3, 4f);
 
         throwAttackBool = false;
         hasAttacked = true;
