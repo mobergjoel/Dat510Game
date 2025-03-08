@@ -53,16 +53,16 @@ public class EnemyAi : MonoBehaviour
     private float lastScreamTime = 0f; // Keeps track of the last time the monster scream
 
     private float lastStompAttack = 0f;
-    private float StompAttackCoolDown = 5f;
+    private float StompAttackCoolDown = 6f;
 
     private float lastRushAttack = 0f;
-    private float rushAttackCoolDown = 12f;
+    private float rushAttackCoolDown = 10f;
 
     private float lastThrowAttack = 0f;
     private float throwAttackCoolDown = 1f;
 
     private float lastRageAttack = 0f;
-    private float rageAttackCoolDown = 8f;
+    private float rageAttackCoolDown = 15f;
 
     public GameObject MonsterJumpscare;
     public GroundAttack groundAttack;
@@ -133,7 +133,7 @@ public class EnemyAi : MonoBehaviour
 
             if (animator.GetBool("BossBattle"))
             {
-                sightRange = 20;
+                sightRange = 40;
             }
             else if (flashLightScript.getFlashLightOn())
             {
@@ -283,14 +283,15 @@ public class EnemyAi : MonoBehaviour
                     lastAttack = Time.time;
                     
                 }
-                else if (Time.time - lastRageAttack >= rageAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked)
+                else if (Time.time - lastRageAttack >= rageAttackCoolDown && Time.time - lastAttack >= lastRushAttackCoolDown && !throwAttackBool && !hasAttacked && distanceToPlayer <= 27)
                 {
                     StartCoroutine(RageAttack());
                     lastAttack = Time.time + 1.5f;
+                    lastRageAttack = Time.time + 1.5f;
 
                 }
 
-                else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked)
+                else if (Time.time - lastRushAttack >= rushAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastAttack >= lastThrowAttackCoolDown && !throwAttackBool && !hasAttacked && !RushAttackBool)
                 {
 
                     RushAttackBool = true;
@@ -300,7 +301,7 @@ public class EnemyAi : MonoBehaviour
                     
                 }
                 
-                else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked)
+                else if (Time.time - lastThrowAttack >= throwAttackCoolDown && Time.time - lastAttack >= lastStompAttackCoolDown && Time.time - lastRushAttack >= lastRushAttackCoolDown && !RushAttackBool && !throwAttackBool && !hasAttacked && distanceToPlayer <= 35)
                 {
                     projectile.SetActive(true);
                     float random = Random.Range(0, 3);
@@ -325,6 +326,7 @@ public class EnemyAi : MonoBehaviour
             if(RushAttackBool)
             {
                 Vector3 distanceToWalkPoint = transform.position - walkPoint;
+                Debug.Log(distanceToWalkPoint.magnitude);
                 if (distanceToWalkPoint.magnitude < 2f)
                 {
                     animator.SetBool("RushAttack", false);
@@ -333,6 +335,7 @@ public class EnemyAi : MonoBehaviour
                     agent.acceleration = monsteracceleration;
                     walkPointSet = false;
                     hasAttacked = true;
+                    lastAttack = Time.time-1.5f;
                 }
             }
             else if (RageAttackBool)
@@ -394,12 +397,12 @@ public class EnemyAi : MonoBehaviour
         if (random == 0)
         {
             animator.SetBool("StrafeRight", true);
-            targetPosition = agent.transform.position + agent.transform.right * 7f;
+            targetPosition = agent.transform.position + agent.transform.right * 6f;
         }
         else
         {
             animator.SetBool("StrafeLeft", true);
-            targetPosition = agent.transform.position - agent.transform.right * 7f;
+            targetPosition = agent.transform.position - agent.transform.right * 6f;
         }
 
         NavMeshHit hit;
@@ -597,9 +600,9 @@ public class EnemyAi : MonoBehaviour
         agent.acceleration = agent.acceleration * 10;
         agent.transform.LookAt(player);
 
-        Vector3 targetPosition = agent.transform.position + agent.transform.forward * 25f;
+        Vector3 targetPosition = agent.transform.position + agent.transform.forward * 35f;
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(targetPosition, out hit, 50f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(targetPosition, out hit, 35f, NavMesh.AllAreas))
         {
             walkPoint = hit.position; // Set walkPoint to the closest valid NavMesh position
             walkPointSet = true;
