@@ -3,12 +3,13 @@ using UnityEngine;
 
 public class MonsterShooter : MonoBehaviour
 {
-    public GameObject fireballPrefab;  // Dra in din eldbolls-prefab här
-    public Transform firePoint;        // Punkt där eldbollen skjuts från
+    public GameObject fireballPrefab;  // Dra in din eldbolls-prefab hï¿½r
+    public Transform firePoint;        // Punkt dï¿½r eldbollen skjuts frï¿½n
     public int numberOfFireballs = 5;  // Antal skott
-    public float fireballSpeed = 10f;  // Basfart på skotten
+    public float fireballSpeed = 10f;  // Basfart pï¿½ skotten
     public float spreadAngle = 15f;    // Hur mycket de sprider sig
     public float fireRate = 0.3f;      // Tid mellan skott
+    public LayerMask treeLayer;
 
     public void StartShooting(Transform player)
     {
@@ -27,6 +28,9 @@ public class MonsterShooter : MonoBehaviour
     private void ShootAtPlayer(Transform player)
     {
         GameObject fireball = Instantiate(fireballPrefab, firePoint.position, Quaternion.identity);
+
+        Fireball fireballScript = fireball.GetComponent<Fireball>();
+
         Rigidbody rb = fireball.GetComponent<Rigidbody>();
 
         if (rb != null)
@@ -38,9 +42,10 @@ public class MonsterShooter : MonoBehaviour
             direction = Quaternion.Euler(0, randomAngle, 0) * direction;
 
             rb.velocity = direction;
+            fireballScript.treeLayer = treeLayer;
         }
 
-        Destroy(fireball, 4f); // Förstör eldbollen efter 5 sekunder
+        Destroy(fireball, 4f); // Fï¿½rstï¿½r eldbollen efter 5 sekunder
     }
 
 
@@ -49,20 +54,20 @@ public class MonsterShooter : MonoBehaviour
         Vector3 start = firePoint.position;
         Vector3 toTarget = target - start;
 
-        float height = Mathf.Max(toTarget.y + 2f, 1f); // Minst 1 enhet höjd för att undvika NaN
-        toTarget.y = 0; // Ignorera höjdskillnad i XZ-riktningen
+        float height = Mathf.Max(toTarget.y + 2f, 1f); // Minst 1 enhet hï¿½jd fï¿½r att undvika NaN
+        toTarget.y = 0; // Ignorera hï¿½jdskillnad i XZ-riktningen
 
         float distance = toTarget.magnitude;
-        float gravity = Mathf.Abs(Physics.gravity.y); // Se till att gravitationen är positiv
+        float gravity = Mathf.Abs(Physics.gravity.y); // Se till att gravitationen ï¿½r positiv
 
-        // Felskydd: Om avståndet är för litet, returnera en standardriktning
+        // Felskydd: Om avstï¿½ndet ï¿½r fï¿½r litet, returnera en standardriktning
         if (distance < 0.1f) return Vector3.forward * 5f + Vector3.up * 2f;
 
         float velocityY = Mathf.Sqrt(2 * gravity * height);
         float timeToApex = velocityY / gravity;
         float totalTime = timeToApex + Mathf.Sqrt(2 * height / gravity);
 
-        // Felskydd: Om totalTime är 0, returnera en standardriktning
+        // Felskydd: Om totalTime ï¿½r 0, returnera en standardriktning
         if (totalTime <= 0.01f) return Vector3.forward * 5f + Vector3.up * 2f;
 
         float velocityXZ = distance / totalTime;

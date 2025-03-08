@@ -120,10 +120,7 @@ public class EnemyAi : MonoBehaviour
         {
             // Disable NavMeshAgent and stop all actions
             agent.enabled = false;
-            animator.SetBool("StrafeLeft", false);
-            animator.SetBool("StrafeRight", false);
-            animator.SetBool("RushAttack", false);
-            animator.SetBool("IsDead", true);
+            return;
         }
         else
         {

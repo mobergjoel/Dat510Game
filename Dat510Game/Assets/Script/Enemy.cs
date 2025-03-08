@@ -7,50 +7,22 @@ using System.Collections;
 public class Enemy : MonoBehaviour
 {
     public float health = 50f;
-    Animator animator;
-
+    public Slider healthBar;
     public bool isDead = false;
+
+    
+    private Animator animator;
+    private EnemyAi enemyAi;
+
+
     private void Awake() {
         animator = GetComponent<Animator>();
+        enemyAi = GetComponent<EnemyAi>();
         animator.SetBool("IsDead", false);
 
     }
 
-    public Slider healthBar;
-    public void TakeDamage(float amount)
-    {
-        health -= amount;
-        healthBar.value = health;
-        if (health <= 0f)
-        {
-            //play animation
-            Die();
-        }
-    }
-
-    void Die()
-    {
-        isDead = true;
-        StartCoroutine(HandleDeath());
-
-    }
-
-    private IEnumerator HandleDeath()
-    {
-        yield return new WaitForSeconds(6f);
-        gameObject.SetActive(false);
-        healthBar.gameObject.SetActive(false);
-        Invoke("loadGameOver", 1f);
-        Debug.Log("Game Over!");
-    }
-
-    private void loadGameOver()
-    {
-        Debug.Log("Game Over loaded");
-        SceneManager.LoadScene("GameWinScene");
-    }
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         healthBar.maxValue = health;
         healthBar.value = health;
@@ -58,10 +30,61 @@ public class Enemy : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TakeDamage(float amount)
     {
-        
+        if (isDead) return;
+
+        health -= amount;
+        healthBar.value = health;
+        if (health <= 0f)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        isDead = true;
+        StopAllCoroutines();
+        StopAllAnimations();
+        DisableEnemyAI();
+
+        animator.SetBool("IsDead", true);
+        StartCoroutine(HandleDeath());
+
+    }
+
+    private void StopAllAnimations()
+    {
+        animator.SetBool("RushAttack", false);
+        animator.SetBool("StrafeLeft", false);
+        animator.SetBool("StrafeRight", false);
+        animator.SetBool("GroundAttack", false);
+        animator.ResetTrigger("RageAttack");
+        // Add any other animation booleans or triggers that need to be reset
+    }
+
+    private void DisableEnemyAI()
+    {
+        if (enemyAi != null)
+        {
+            enemyAi.enabled = false;
+        }
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        healthBar.gameObject.SetActive(false);
+        yield return new WaitForSeconds(5f);
+        gameObject.SetActive(false);
+        Invoke("loadGameOver", 0f);
+        Debug.Log("Game Over!");
+    }
+
+    private void loadGameOver()
+    {
+        Debug.Log("Game Over loaded");
+        SceneManager.LoadScene("GameWinScene");
     }
 
   
