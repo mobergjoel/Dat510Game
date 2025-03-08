@@ -41877,6 +41877,53 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 488080, guid: d56462b3ff64676458a7fead7cda0e5f, type: 3}
   m_PrefabInstance: {fileID: 758534686}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1366719701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1366719702}
+  - component: {fileID: 1366719703}
+  m_Layer: 0
+  m_Name: Arena
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1366719702
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366719701}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.41, y: -34, z: 31.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1366719703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366719701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8933831f0d7d0ea4b9325a00809e6505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arenaPrefab: {fileID: 5916902381542897281, guid: 08adaa2d7300a9c4591e5943ed281186, type: 3}
+  numberOfPrefabs: 50
+  radius: 30
 --- !u!1001 &1368221637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -76785,6 +76832,7 @@ MonoBehaviour:
   bossBattleLight: {fileID: 1203829459}
   blinkingSkybox: {fileID: 113159249}
   monster: {fileID: 1647690700}
+  arena: {fileID: 1366719701}
   animator: {fileID: 3490026887066422456}
 --- !u!4 &4838629738851732964
 Transform:
@@ -77294,3 +77342,4 @@ SceneRoots:
   - {fileID: 113159250}
   - {fileID: 1227089250}
   - {fileID: 2071459994}
+  - {fileID: 1366719702}

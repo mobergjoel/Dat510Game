@@ -19,6 +19,7 @@ public class PickUpGun : MonoBehaviour
     public GameObject bossBattleLight;
     public BlinkingSkybox blinkingSkybox;
     public EnemyAi monster;
+    public GameObject arena;
 
 
     public Animator animator;
@@ -28,6 +29,7 @@ public class PickUpGun : MonoBehaviour
         inReach = false;
         pickUpText.SetActive(false);
         invOB.SetActive(false);
+        arena.SetActive(false);
 
     }
 
@@ -68,6 +70,7 @@ public class PickUpGun : MonoBehaviour
             bossBattleLight.SetActive(true);
             blinkingSkybox.StartBlinking();
             monster.canAttack = false;
+            arena.SetActive(true);
 
 
         }
