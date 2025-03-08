@@ -966,32 +966,60 @@ public class EnemyAi : MonoBehaviour
         projectile.transform.localPosition = new Vector3(projectileOrigin.x, projectileOrigin.y, projectileOrigin.z);
 
     }
-    public void ProjectileCollision(Collision other)
+    public IEnumerator ProjectileCollision(Collision other)
     {
         if (other.transform.tag == "Player")
         {
-            Health.Hit(damageForProjectile);
+            if (Shield)
+            {
+
+            }
+            else
+            {
+                Health.Hit(damageForProjectile);
+                Shield = true;
+                yield return new WaitForSeconds(1f);
+                Shield = false;
+            }
         }
     }
-
-    public void ShockWaveCollision(GameObject other)
+    bool Shield = false;
+    public IEnumerator ShockWaveCollision()
     {
-        if (other.CompareTag("Player"))
+        if(Shield) 
+        {
+          
+        }
+        else
         {
             Health.Hit(damageForStomp);
+            Shield = true;
+            yield return new WaitForSeconds(1f);
+            Shield = false;
         }
+        
     }
-    private void RushCollision(Collision other)
+    private IEnumerator RushCollision(Collision other)
     {
         if (other.transform.tag == "Player")
         {
-            Health.Hit(damageForRush);
+            if (Shield)
+            {
+
+            }
+            else
+            {
+                Health.Hit(damageForRush);
+                Shield = true;
+                yield return new WaitForSeconds(1f);
+                Shield= false;
+            }
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        RushCollision(collision);
+        StartCoroutine(RushCollision(collision));
     }
 
 

@@ -22,6 +22,6 @@ public class ProjectileScript : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        monsterScript.ProjectileCollision(collision);
+        StartCoroutine(monsterScript.ProjectileCollision(collision));
     }
 }

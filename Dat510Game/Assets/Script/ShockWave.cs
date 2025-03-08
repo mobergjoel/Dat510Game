@@ -17,9 +17,9 @@ public class ShockWave : MonoBehaviour
     {
         
     }
-    void OnParticleCollision(GameObject other)
+    void OnParticleTrigger()
     {
-        monsterScript.ShockWaveCollision(other);
+        StartCoroutine(monsterScript.ShockWaveCollision());
     }
 
 }
