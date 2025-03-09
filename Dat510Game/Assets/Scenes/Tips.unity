@@ -433,7 +433,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 273}
+  m_AnchoredPosition: {x: 6, y: 280}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1027089265
@@ -458,7 +458,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 50
+    m_FontSize: 40
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 0
@@ -480,7 +480,12 @@ MonoBehaviour:
     If you sneak the monster will hear you less.
 
     The monster
-    becomes more dangerous the more keys you collect.'
+    becomes more dangerous the more keys you collect.
+
+    Keys spawn randomly at
+    points of interest.
+
+    There is never more than one key at a certain location.'
 --- !u!222 &1027089266
 CanvasRenderer:
   m_ObjectHideFlags: 0
