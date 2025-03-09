@@ -972,7 +972,6 @@ public class EnemyAi : MonoBehaviour
         {
             if (Shield)
             {
-
             }
             else
             {
@@ -994,7 +993,7 @@ public class EnemyAi : MonoBehaviour
         {
             Health.Hit(damageForStomp);
             Shield = true;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             Shield = false;
         }
         

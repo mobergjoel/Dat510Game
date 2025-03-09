@@ -21128,7 +21128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7ff9cd0cb675541a99f3f9ae88c574, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 200
+  health: 100
   healthBar: {fileID: 1420439917}
 --- !u!1 &796524575
 GameObject:
@@ -27808,7 +27808,7 @@ Transform:
   m_GameObject: {fileID: 958629912}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 13, z: 0}
+  m_LocalPosition: {x: 0, y: 7.96, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27834,7 +27834,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1
-  m_Height: 3
+  m_Height: 40
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &959720731
@@ -52275,9 +52275,9 @@ MonoBehaviour:
   fireballPrefab: {fileID: 3487135328422469410, guid: f1f95f479ab1a374b9381c358b254a77, type: 3}
   distanceForProjectileThrow: 10
   timeBetweenProjectileThrows: 5
-  damageForProjectile: 25
+  damageForProjectile: 15
   damageForStomp: 35
-  damageForRush: 60
+  damageForRush: 40
   projectileThrowAnimationTimeOffset: 0.72
   shockWaveAnimationTimeOffset: 1.9
   projectile: {fileID: 7937579789934987797}
@@ -75533,7 +75533,7 @@ ParticleSystem:
     y:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 0.40910858
+      scalar: 0.93518806
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -78309,19 +78309,19 @@ ParticleSystem:
       serializedVersion: 2
       m_Bits: 0
     maxCollisionShapes: 256
-    quality: 1
+    quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
     enabled: 1
     serializedVersion: 2
-    inside: 0
+    inside: 2
     outside: 0
-    enter: 2
+    enter: 0
     exit: 0
-    colliderQueryMode: 2
+    colliderQueryMode: 1
     radiusScale: 1
     primitives:
     - {fileID: 958629913}
