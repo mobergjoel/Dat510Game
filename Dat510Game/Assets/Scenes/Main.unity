@@ -52276,8 +52276,8 @@ MonoBehaviour:
   distanceForProjectileThrow: 10
   timeBetweenProjectileThrows: 5
   damageForProjectile: 15
-  damageForStomp: 35
-  damageForRush: 40
+  damageForStomp: 25
+  damageForRush: 30
   projectileThrowAnimationTimeOffset: 0.72
   shockWaveAnimationTimeOffset: 1.9
   projectile: {fileID: 7937579789934987797}
