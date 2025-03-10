@@ -66,7 +66,11 @@ public class OpenBoxScript : MonoBehaviour
 
     void Update()
     {
-        if (howManyKeys == keysNeeded && inReach && Input.GetButtonDown("Interact") && !isOpen)
+        if (inReach && Input.GetKeyDown(KeyCode.P) && !isOpen)
+        {
+            ActivateCheat();
+        }
+        else if (howManyKeys == keysNeeded && inReach && Input.GetButtonDown("Interact") && !isOpen)
         {
             keyOBNeeded1.SetActive(false);
             keyOBNeeded2.SetActive(false);
@@ -83,8 +87,6 @@ public class OpenBoxScript : MonoBehaviour
             isOpen = true;
             script.enabled = true;
             script.canShowPickUpText = true;
-
-
         }
 
         else if (inReach && Input.GetButtonDown("Interact") && !isOpen)
@@ -116,4 +118,13 @@ public class OpenBoxScript : MonoBehaviour
             hudKey3.SetActive(true);
         }
     }
+
+    void ActivateCheat()
+    {
+        hudKey1.SetActive(true);
+        hudKey2.SetActive(true);
+        hudKey3.SetActive(true);
+        howManyKeys = keysNeeded;
+    }
+
 }
