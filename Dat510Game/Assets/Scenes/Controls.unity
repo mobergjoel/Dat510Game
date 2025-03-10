@@ -433,7 +433,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 289}
+  m_AnchoredPosition: {x: 6, y: 326}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1027089265
@@ -478,7 +478,10 @@ MonoBehaviour:
     Press
     F to turn on/off flashlight
 
-    Press M to open/close the map'
+    Press M to open/close the map
+
+    Press ESC
+    to go back to main menu (this resets progress)'
 --- !u!222 &1027089266
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -895,7 +898,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000030517578, y: -373}
+  m_AnchoredPosition: {x: 0.000030517578, y: -405}
   m_SizeDelta: {x: 300, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1997721128
