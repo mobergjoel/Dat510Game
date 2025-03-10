@@ -35,4 +35,9 @@ public class DeathMenu : MonoBehaviour
     {
         SceneManager.LoadScene("Tips");
     }
+
+    public void Cheats()
+    {
+        SceneManager.LoadScene("Cheats");
+    }
 }
