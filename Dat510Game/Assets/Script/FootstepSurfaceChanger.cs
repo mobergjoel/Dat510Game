@@ -8,7 +8,7 @@ public class FootstepSurfaceChanger : MonoBehaviour
     [System.Serializable]
     public class SurfaceFootstep
     {
-        public LayerMask groundLayer; // Assign different layers for different surfaces
+        public LayerMask groundLayer;
         public AudioClip footstepSound;
     }
 
@@ -45,7 +45,7 @@ public class FootstepSurfaceChanger : MonoBehaviour
     }
     public void PlayFootstepSound()
     {
-        if (!footstepSource.isPlaying) // Avoid replaying if already playing
+        if (!footstepSource.isPlaying)
         {
             footstepSource.Play();
         }

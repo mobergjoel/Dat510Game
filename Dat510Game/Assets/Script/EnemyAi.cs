@@ -406,7 +406,7 @@ public class EnemyAi : MonoBehaviour
         }
         
 
-        // Slå av tidigare animationer för att undvika konflikt
+        
         animator.SetBool("StrafeRight", false);
         animator.SetBool("StrafeLeft", false);
 
@@ -434,19 +434,17 @@ public class EnemyAi : MonoBehaviour
         }
         else
         {
-            // Om en giltig position inte hittas, avbryt attackmönstret
+            
             inWalkBetweenAttacksMode = false;
             hasAttacked = false;
             yield break;
         }
 
-        // Vänta tills vi når destinationen
         while (Vector3.Distance(agent.transform.position, walkPoint) > 1f)
         {
             yield return null;
         }
 
-        // Återställ status för nästa attack
         animator.SetBool("StrafeRight", false);
         animator.SetBool("StrafeLeft", false);
         inWalkBetweenAttacksMode = false;
@@ -471,12 +469,8 @@ public class EnemyAi : MonoBehaviour
 
     private void GroundAttack()
     {
-        animator.SetBool("GroundAttack", true); // B�rja markattackanimationen
+        animator.SetBool("GroundAttack", true); 
 
-        // V�nta i 5 sekunder
-        
-
-        // Anropa metoden f�r att trigga markattack-v�gen
         groundAttack.TriggerWave();
     }
 
@@ -542,7 +536,6 @@ public class EnemyAi : MonoBehaviour
 
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
 
-        // Skapa tre projektiler
         GameObject centerProjectile = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
         GameObject leftProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
         GameObject rightProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
@@ -556,7 +549,6 @@ public class EnemyAi : MonoBehaviour
         Collider colLeft = leftProjectile.GetComponent<Collider>();
         Collider colRight = rightProjectile.GetComponent<Collider>();
 
-        // Se till att projektilerna inte kolliderar med varandra
         Physics.IgnoreCollision(colCenter, colLeft);
         Physics.IgnoreCollision(colCenter, colRight);
         Physics.IgnoreCollision(colLeft, colRight);
@@ -569,7 +561,6 @@ public class EnemyAi : MonoBehaviour
         rbLeft.collisionDetectionMode = CollisionDetectionMode.Discrete;
         rbRight.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-        // Gör dem fysiska och ta bort deras parent
         rbCenter.isKinematic = false;
         rbLeft.isKinematic = false;
         rbRight.isKinematic = false;
@@ -578,20 +569,16 @@ public class EnemyAi : MonoBehaviour
         leftProjectile.transform.parent = null;
         rightProjectile.transform.parent = null;
 
-        // Rikta centerprojektilen rakt mot spelaren
         centerProjectile.transform.LookAt(player);
 
-        // Beräkna rotationsvinklar för sidoprojektiler
         Quaternion leftRotation = Quaternion.Euler(0, -10, 0) * centerProjectile.transform.rotation;
         Quaternion centerRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
         Quaternion rightRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
 
-        // Rotera sidoprojektilerna
         leftProjectile.transform.rotation = leftRotation;
         centerProjectile.transform.rotation = centerRotation;
         rightProjectile.transform.rotation = rightRotation;
 
-        // Skjut projektilerna framåt
         rbCenter.AddForce(agent.transform.forward * 1000);
         rbLeft.AddForce(agent.transform.forward * 1000);
         rbRight.AddForce(agent.transform.forward * 1000);
@@ -609,7 +596,6 @@ public class EnemyAi : MonoBehaviour
 
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
 
-        // Skapa tre projektiler
         GameObject centerProjectile = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
         GameObject leftProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
         GameObject rightProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
@@ -623,7 +609,6 @@ public class EnemyAi : MonoBehaviour
         Collider colLeft = leftProjectile.GetComponent<Collider>();
         Collider colRight = rightProjectile.GetComponent<Collider>();
 
-        // Se till att projektilerna inte kolliderar med varandra
         Physics.IgnoreCollision(colCenter, colLeft);
         Physics.IgnoreCollision(colCenter, colRight);
         Physics.IgnoreCollision(colLeft, colRight);
@@ -636,7 +621,6 @@ public class EnemyAi : MonoBehaviour
         rbLeft.collisionDetectionMode = CollisionDetectionMode.Discrete;
         rbRight.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-        // Gör dem fysiska och ta bort deras parent
         rbCenter.isKinematic = false;
         rbLeft.isKinematic = false;
         rbRight.isKinematic = false;
@@ -645,20 +629,16 @@ public class EnemyAi : MonoBehaviour
         leftProjectile.transform.parent = null;
         rightProjectile.transform.parent = null;
 
-        // Rikta centerprojektilen rakt mot spelaren
         centerProjectile.transform.LookAt(player);
 
-        // Beräkna rotationsvinklar för sidoprojektiler
         Quaternion leftRotation = Quaternion.Euler(0, -10, 0) * centerProjectile.transform.rotation;
         Quaternion centerRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
         Quaternion rightRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
 
-        // Rotera sidoprojektilerna
         leftProjectile.transform.rotation = leftRotation;
         centerProjectile.transform.rotation = centerRotation;
         rightProjectile.transform.rotation = rightRotation;
 
-        // Skjut projektilerna framåt
         rbCenter.AddForce(agent.transform.forward * 1000);
         rbLeft.AddForce(agent.transform.forward * 1000);
         rbRight.AddForce(agent.transform.forward * 1000);
@@ -677,7 +657,6 @@ public class EnemyAi : MonoBehaviour
 
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
 
-        // Skapa tre projektiler
         GameObject centerProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
         GameObject leftProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
         GameObject rightProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
@@ -691,7 +670,6 @@ public class EnemyAi : MonoBehaviour
         Collider colLeft2 = leftProjectile2.GetComponent<Collider>();
         Collider colRight2 = rightProjectile2.GetComponent<Collider>();
 
-        // Se till att projektilerna inte kolliderar med varandra
         Physics.IgnoreCollision(colCenter2, colLeft2);
         Physics.IgnoreCollision(colCenter2, colRight2);
         Physics.IgnoreCollision(colLeft2, colRight2);
@@ -704,7 +682,6 @@ public class EnemyAi : MonoBehaviour
         rbLeft2.collisionDetectionMode = CollisionDetectionMode.Discrete;
         rbRight2.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-        // Gör dem fysiska och ta bort deras parent
         rbCenter2.isKinematic = false;
         rbLeft2.isKinematic = false;
         rbRight2.isKinematic = false;
@@ -713,20 +690,16 @@ public class EnemyAi : MonoBehaviour
         leftProjectile2.transform.parent = null;
         rightProjectile2.transform.parent = null;
 
-        // Rikta centerprojektilen rakt mot spelaren
         centerProjectile2.transform.LookAt(player);
 
-        // Beräkna rotationsvinklar för sidoprojektiler
         Quaternion leftRotation2 = Quaternion.Euler(0, -10, 0) * centerProjectile2.transform.rotation;
         Quaternion centerRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
         Quaternion rightRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
 
-        // Rotera sidoprojektilerna
         leftProjectile2.transform.rotation = leftRotation2;
         centerProjectile2.transform.rotation = centerRotation2;
         rightProjectile2.transform.rotation = rightRotation2;
 
-        // Skjut projektilerna framåt
         rbCenter2.AddForce(agent.transform.forward * 1000);
         rbLeft2.AddForce(agent.transform.forward * 1000);
         rbRight2.AddForce(agent.transform.forward * 1000);
@@ -745,7 +718,6 @@ public class EnemyAi : MonoBehaviour
 
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
 
-        // Skapa tre projektiler
         GameObject centerProjectile = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
         GameObject leftProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
         GameObject rightProjectile = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
@@ -759,7 +731,6 @@ public class EnemyAi : MonoBehaviour
         Collider colLeft = leftProjectile.GetComponent<Collider>();
         Collider colRight = rightProjectile.GetComponent<Collider>();
 
-        // Se till att projektilerna inte kolliderar med varandra
         Physics.IgnoreCollision(colCenter, colLeft);
         Physics.IgnoreCollision(colCenter, colRight);
         Physics.IgnoreCollision(colLeft, colRight);
@@ -772,7 +743,6 @@ public class EnemyAi : MonoBehaviour
         rbLeft.collisionDetectionMode = CollisionDetectionMode.Discrete;
         rbRight.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-        // Gör dem fysiska och ta bort deras parent
         rbCenter.isKinematic = false;
         rbLeft.isKinematic = false;
         rbRight.isKinematic = false;
@@ -781,20 +751,16 @@ public class EnemyAi : MonoBehaviour
         leftProjectile.transform.parent = null;
         rightProjectile.transform.parent = null;
 
-        // Rikta centerprojektilen rakt mot spelaren
         centerProjectile.transform.LookAt(player);
 
-        // Beräkna rotationsvinklar för sidoprojektiler
         Quaternion leftRotation = Quaternion.Euler(0, -10, 0) * centerProjectile.transform.rotation;
         Quaternion centerRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
         Quaternion rightRotation = Quaternion.Euler(0, 0, 0) * centerProjectile.transform.rotation;
 
-        // Rotera sidoprojektilerna
         leftProjectile.transform.rotation = leftRotation;
         centerProjectile.transform.rotation = centerRotation;
         rightProjectile.transform.rotation = rightRotation;
 
-        // Skjut projektilerna framåt
         rbCenter.AddForce(agent.transform.forward * 1000);
         rbLeft.AddForce(agent.transform.forward * 1000);
         rbRight.AddForce(agent.transform.forward * 1000);
@@ -811,7 +777,6 @@ public class EnemyAi : MonoBehaviour
 
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
 
-        // Skapa tre projektiler
         GameObject centerProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
         GameObject leftProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
         GameObject rightProjectile2 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
@@ -825,7 +790,6 @@ public class EnemyAi : MonoBehaviour
         Collider colLeft2 = leftProjectile2.GetComponent<Collider>();
         Collider colRight2 = rightProjectile2.GetComponent<Collider>();
 
-        // Se till att projektilerna inte kolliderar med varandra
         Physics.IgnoreCollision(colCenter2, colLeft2);
         Physics.IgnoreCollision(colCenter2, colRight2);
         Physics.IgnoreCollision(colLeft2, colRight2);
@@ -838,7 +802,6 @@ public class EnemyAi : MonoBehaviour
         rbLeft2.collisionDetectionMode = CollisionDetectionMode.Discrete;
         rbRight2.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-        // Gör dem fysiska och ta bort deras parent
         rbCenter2.isKinematic = false;
         rbLeft2.isKinematic = false;
         rbRight2.isKinematic = false;
@@ -847,20 +810,16 @@ public class EnemyAi : MonoBehaviour
         leftProjectile2.transform.parent = null;
         rightProjectile2.transform.parent = null;
 
-        // Rikta centerprojektilen rakt mot spelaren
         centerProjectile2.transform.LookAt(player);
 
-        // Beräkna rotationsvinklar för sidoprojektiler
         Quaternion leftRotation2 = Quaternion.Euler(0, -10, 0) * centerProjectile2.transform.rotation;
         Quaternion centerRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
         Quaternion rightRotation2 = Quaternion.Euler(0, 0, 0) * centerProjectile2.transform.rotation;
 
-        // Rotera sidoprojektilerna
         leftProjectile2.transform.rotation = leftRotation2;
         centerProjectile2.transform.rotation = centerRotation2;
         rightProjectile2.transform.rotation = rightRotation2;
 
-        // Skjut projektilerna framåt
         rbCenter2.AddForce(agent.transform.forward * 1000);
         rbLeft2.AddForce(agent.transform.forward * 1000);
         rbRight2.AddForce(agent.transform.forward * 1000);
@@ -877,7 +836,7 @@ public class EnemyAi : MonoBehaviour
 
         animator.SetTrigger("Throw");
         yield return new WaitForSeconds(projectileThrowAnimationTimeOffset);
-        // Skapa tre projektiler
+
         GameObject centerProjectile3 = Instantiate(fireballPrefab, fireAttackPoint.position, Quaternion.identity);
         GameObject leftProjectile3 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * -0.2f, Quaternion.identity);
         GameObject rightProjectile3 = Instantiate(fireballPrefab, fireAttackPoint.position + transform.right * 0.2f, Quaternion.identity);
@@ -891,7 +850,6 @@ public class EnemyAi : MonoBehaviour
         Collider colLeft3 = leftProjectile3.GetComponent<Collider>();
         Collider colRight3 = rightProjectile3.GetComponent<Collider>();
 
-        // Se till att projektilerna inte kolliderar med varandra
         Physics.IgnoreCollision(colCenter3, colLeft3);
         Physics.IgnoreCollision(colCenter3, colRight3);
         Physics.IgnoreCollision(colLeft3, colRight3);
@@ -904,7 +862,6 @@ public class EnemyAi : MonoBehaviour
         rbLeft3.collisionDetectionMode = CollisionDetectionMode.Discrete;
         rbRight3.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
-        // Gör dem fysiska och ta bort deras parent
         rbCenter3.isKinematic = false;
         rbLeft3.isKinematic = false;
         rbRight3.isKinematic = false;
@@ -913,20 +870,16 @@ public class EnemyAi : MonoBehaviour
         leftProjectile3.transform.parent = null;
         rightProjectile3.transform.parent = null;
 
-        // Rikta centerprojektilen rakt mot spelaren
         centerProjectile3.transform.LookAt(player);
 
-        // Beräkna rotationsvinklar för sidoprojektiler
         Quaternion leftRotation3 = Quaternion.Euler(0, -10, 0) * centerProjectile3.transform.rotation;
         Quaternion centerRotation3 = Quaternion.Euler(0, 0, 0) * centerProjectile3.transform.rotation;
         Quaternion rightRotation3 = Quaternion.Euler(0, 0, 0) * centerProjectile3.transform.rotation;
 
-        // Rotera sidoprojektilerna
         leftProjectile3.transform.rotation = leftRotation3;
         centerProjectile3.transform.rotation = centerRotation3;
         rightProjectile3.transform.rotation = rightRotation3;
 
-        // Skjut projektilerna framåt
         rbCenter3.AddForce(agent.transform.forward * 1000);
         rbLeft3.AddForce(agent.transform.forward * 1000);
         rbRight3.AddForce(agent.transform.forward * 1000);

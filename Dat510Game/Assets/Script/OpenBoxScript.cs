@@ -80,7 +80,6 @@ public class OpenBoxScript : MonoBehaviour
             hudKey3.SetActive(false);
             howManyKeys = 0;
             openSound.Play();
-            //boxOB.SetBool("open", true);
             boxOB.Play();
             openText.SetActive(false);
             keyMissingText.SetActive(false);

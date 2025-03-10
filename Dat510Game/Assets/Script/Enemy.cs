@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
         animator.SetBool("StrafeRight", false);
         animator.SetBool("GroundAttack", false);
         animator.ResetTrigger("RageAttack");
-        // Add any other animation booleans or triggers that need to be reset
+        
     }
 
     private void DisableEnemyAI()

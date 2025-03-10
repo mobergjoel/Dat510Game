@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class MonsterShooter : MonoBehaviour
 {
-    public GameObject fireballPrefab;  // Dra in din eldbolls-prefab h�r
-    public Transform firePoint;        // Punkt d�r eldbollen skjuts fr�n
-    public int numberOfFireballs = 5;  // Antal skott
-    public float fireballSpeed = 10f;  // Basfart p� skotten
-    public float spreadAngle = 15f;    // Hur mycket de sprider sig
-    public float fireRate = 0.3f;      // Tid mellan skott
+    public GameObject fireballPrefab;  
+    public Transform firePoint;        
+    public int numberOfFireballs = 5;  
+    public float fireballSpeed = 10f;  
+    public float spreadAngle = 15f;    
+    public float fireRate = 0.3f;   
     public LayerMask treeLayer;
 
     public void StartShooting(Transform player)
@@ -45,7 +45,7 @@ public class MonsterShooter : MonoBehaviour
             fireballScript.treeLayer = treeLayer;
         }
 
-        Destroy(fireball, 4f); // F�rst�r eldbollen efter 5 sekunder
+        Destroy(fireball, 4f);
     }
 
 
@@ -54,20 +54,18 @@ public class MonsterShooter : MonoBehaviour
         Vector3 start = firePoint.position;
         Vector3 toTarget = target - start;
 
-        float height = Mathf.Max(toTarget.y + 2f, 1f); // Minst 1 enhet h�jd f�r att undvika NaN
-        toTarget.y = 0; // Ignorera h�jdskillnad i XZ-riktningen
+        float height = Mathf.Max(toTarget.y + 2f, 1f); 
+        toTarget.y = 0; 
 
         float distance = toTarget.magnitude;
-        float gravity = Mathf.Abs(Physics.gravity.y); // Se till att gravitationen �r positiv
+        float gravity = Mathf.Abs(Physics.gravity.y); 
 
-        // Felskydd: Om avst�ndet �r f�r litet, returnera en standardriktning
         if (distance < 0.1f) return Vector3.forward * 5f + Vector3.up * 2f;
 
         float velocityY = Mathf.Sqrt(2 * gravity * height);
         float timeToApex = velocityY / gravity;
         float totalTime = timeToApex + Mathf.Sqrt(2 * height / gravity);
 
-        // Felskydd: Om totalTime �r 0, returnera en standardriktning
         if (totalTime <= 0.01f) return Vector3.forward * 5f + Vector3.up * 2f;
 
         float velocityXZ = distance / totalTime;

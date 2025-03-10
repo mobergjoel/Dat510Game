@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
-    public GameObject mapUI; // Assign your Raw Image GameObject
+    public GameObject mapUI;
 
     void Update()
     {

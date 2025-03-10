@@ -6,11 +6,11 @@ public class GroundAttack : MonoBehaviour
     public Terrain terrain;
     public Transform monster;
     public Transform player;
-    public float waveSpeed = 2f;  // Slower wave movement
+    public float waveSpeed = 2f;  
     public float waveWidth = 4f;
-    public float waveHeight = 0.1f; // Lower wave height for realism
-    public float waveLength = 10f;  // Total distance wave travels
-    public int affectedSize = 50;   // Resolution of modified terrain section
+    public float waveHeight = 0.1f; 
+    public float waveLength = 10f;  
+    public int affectedSize = 50;   
 
     private TerrainData terrainData;
     private int heightmapWidth;
@@ -38,21 +38,19 @@ public class GroundAttack : MonoBehaviour
         float waveStartTime = Time.time;
         float waveDistance = 0f;
 
-        // Get terrain heightmap coordinates of the monster's position
+        
         int startX, startY;
         GetHeightmapCoords(monsterPos, out startX, out startY);
 
-        // Ensure valid terrain modification area
         startX = Mathf.Clamp(startX, 0, heightmapWidth - affectedSize);
         startY = Mathf.Clamp(startY, 0, heightmapHeight - affectedSize);
 
-        // Store the original terrain heights for resetting later
         originalHeights = terrainData.GetHeights(startX, startY, affectedSize, affectedSize);
         while (waveDistance < waveLength)
         {
             waveDistance = (Time.time - waveStartTime) * waveSpeed;
             ApplyWaveEffect(monsterPos, waveDirection, waveDistance, startX, startY);
-            yield return new WaitForSeconds(0.01f); // Makes the wave move gradually
+            yield return new WaitForSeconds(0.01f);
         }
 
         ResetTerrain(startX, startY);
@@ -66,31 +64,27 @@ public class GroundAttack : MonoBehaviour
         {
             for (int y = 0; y < affectedSize; y++)
             {
-                // Convert heightmap indices to world space
                 Vector3 worldPos = HeightmapToWorld(startX + x, startY + y);
 
-                // Calculate wave center moving forward
                 Vector3 waveCenter = origin + direction * distance;
                 Debug.DrawLine(origin, waveCenter, Color.red, 5f);
 
                 float distToWave = Mathf.Abs(Vector3.Dot(worldPos - waveCenter, direction));
 
 
-                if (distToWave < waveWidth / 2f)  // Only modify terrain within wave width
+                if (distToWave < waveWidth / 2f)
                 {
-                    // Check for buildings before modifying terrain
                     if (!Physics.Raycast(worldPos + Vector3.up * 10f, Vector3.down, 20f, LayerMask.GetMask("Building")))
                     {
-                        float waveFactor = Mathf.Sin((distance / waveLength) * Mathf.PI); // Smooth sine wave
+                        float waveFactor = Mathf.Sin((distance / waveLength) * Mathf.PI);
                         float heightChange = waveFactor * waveHeight;
 
-                        heights[x, y] = Mathf.Clamp(originalHeights[x, y] + heightChange, 0, 1); // Prevents unnatural heights
+                        heights[x, y] = Mathf.Clamp(originalHeights[x, y] + heightChange, 0, 1);
                     }
                 }
             }
         }
 
-        // Apply modified heights to terrain
         terrainData.SetHeights(startX, startY, heights);
     }
 
@@ -106,7 +100,7 @@ public class GroundAttack : MonoBehaviour
         Vector3 terrainPos = terrain.transform.position;
         float worldX = terrainPos.x + (x / (float)heightmapWidth) * terrainData.size.x;
         float worldZ = terrainPos.z + (y / (float)heightmapHeight) * terrainData.size.z;
-        float worldY = terrain.SampleHeight(new Vector3(worldX, 0, worldZ));  // Sample terrain height
+        float worldY = terrain.SampleHeight(new Vector3(worldX, 0, worldZ));
 
         return new Vector3(worldX, worldY, worldZ);
     }
